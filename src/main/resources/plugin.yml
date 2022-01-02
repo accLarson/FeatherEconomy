@@ -1,0 +1,18 @@
+name: FeatherEconomy
+version: ${project.version}
+main: com.wasted_ticks.feathereconomy.FeatherEconomy
+api-version: 1.18
+loadbefore: [Vault]
+commands:
+  balance:
+    description: View your balance
+    usage: /<command>
+  deposit:
+    description: Deposit lapis into your account
+    usage: /<command> [amount]
+  transfer:
+    description: Transfer lapis from your account to another account
+    usage: /<command> [player] [amount]
+  withdraw:
+    description: Withdraw lapis from your account
+    usage: /<command> [amount]
