@@ -13,6 +13,7 @@ public class FeatherEconomyConfig {
     private int mysqlPort;
     private String mysqlPassword;
     private String mysqlDatabase;
+    private boolean mysqlEnabled;
 
     public FeatherEconomyConfig(FeatherEconomy plugin) {
         this.plugin = plugin;
@@ -22,6 +23,7 @@ public class FeatherEconomyConfig {
     }
 
     private void loadConfig() {
+        this.mysqlEnabled = config.getBoolean("settings.mysql.enabled");
         this.mysqlUsername = config.getString("settings.mysql.username");
         this.mysqlHost = config.getString("settings.mysql.host");
         this.mysqlPort = config.getInt("settings.mysql.port");
@@ -47,5 +49,9 @@ public class FeatherEconomyConfig {
 
     public String getMysqlDatabase() {
         return mysqlDatabase;
+    }
+
+    public boolean isMysqlEnabled() {
+        return mysqlEnabled;
     }
 }

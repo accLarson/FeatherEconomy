@@ -4,6 +4,7 @@ import com.wasted_ticks.feathereconomy.FeatherEconomy;
 import com.wasted_ticks.feathereconomy.config.FeatherEconomyConfig;
 
 import javax.xml.crypto.Data;
+import java.io.File;
 import java.sql.*;
 import java.util.Properties;
 
@@ -11,9 +12,13 @@ public class DatabaseManager {
 
     private static Connection connection;
     private final FeatherEconomy plugin;
+    private final FeatherEconomyConfig config;
+    private final boolean isMySQLEnabled;
 
     public DatabaseManager(FeatherEconomy plugin) {
         this.plugin = plugin;
+        this.config = plugin.getFeatherEconomyConfig();
+        this.isMySQLEnabled = this.config.isMysqlEnabled();
         this.initConnection();
         if(connection != null) {
             this.initTables();
@@ -21,7 +26,14 @@ public class DatabaseManager {
     }
 
     private void initConnection() {
+        if(this.isMySQLEnabled) {
+            this.initMySQLConnection();
+        } else {
+            this.initSQLiteConnection();
+        }
+    }
 
+    private void initMySQLConnection(){
         FeatherEconomyConfig config = this.plugin.getFeatherEconomyConfig();
 
         String host = config.getMysqlHost();
@@ -40,6 +52,20 @@ public class DatabaseManager {
             plugin.getLog().severe("[FeatherEconomy] Unable to initialize connection.");
             plugin.getLog().severe("[FeatherEconomy] Ensure connection can be made with provided mysql strings.");
             plugin.getLog().severe("[FeatherEconomy] Connection URL: " + url);
+        }
+
+    }
+
+    private void initSQLiteConnection(){
+        File folder = new File(this.plugin.getDataFolder().getPath());
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        File file = new File(folder.getAbsolutePath() + File.separator + "feather_economy.db");
+        try {
+            this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
+        } catch (SQLException sQLException) {
+            plugin.getLog().severe("[FeatherEconomy] Unable to initialize connection.");
         }
     }
 
@@ -70,9 +96,9 @@ public class DatabaseManager {
     }
 
     private void initTables() {
-        if(!this.existsTable("accounts")) {
-            plugin.getLog().info("[FeatherEconomy] Creating accounts table.");
-            String query = "CREATE TABLE IF NOT EXISTS `accounts` ("
+        if(!this.existsTable("economy_accounts")) {
+            plugin.getLog().info("[FeatherEconomy] Creating economy_accounts table.");
+            String query = "CREATE TABLE IF NOT EXISTS `economy_accounts` ("
                     + " `mojang_uuid` VARCHAR(255) PRIMARY KEY, "
                     + " `balance` double(64,2) NOT NULL DEFAULT 0, "
                     + " `date_created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "

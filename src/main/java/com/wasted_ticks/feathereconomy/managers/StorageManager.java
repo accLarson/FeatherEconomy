@@ -20,7 +20,7 @@ public class StorageManager {
     }
 
     private void init() {
-        String query = "SELECT * FROM economy.accounts;";
+        String query = "SELECT * FROM economy_accounts;";
         try(ResultSet results = database.executeQuery(query)){
             if(results != null) {
                 while (results.next()) {
@@ -34,7 +34,7 @@ public class StorageManager {
     }
 
     public boolean hasAccount(UUID uuid) {
-        String query = "SELECT * FROM economy.accounts WHERE mojang_uuid = '" + uuid.toString() + "' LIMIT 1;";
+        String query = "SELECT * FROM economy_accounts WHERE mojang_uuid = '" + uuid.toString() + "' LIMIT 1;";
         if(accounts.contains(uuid)) {
             return true;
         } else {
@@ -51,7 +51,7 @@ public class StorageManager {
     }
 
     public double getBalance(UUID uuid) {
-        String query = "SELECT balance FROM economy.accounts WHERE mojang_uuid = '" + uuid.toString() + "' LIMIT 1;";
+        String query = "SELECT balance FROM economy_accounts WHERE mojang_uuid = '" + uuid.toString() + "' LIMIT 1;";
         try(ResultSet results = database.executeQuery(query)){
             if(results != null && results.next()){
                 return results.getDouble("balance");
@@ -63,7 +63,7 @@ public class StorageManager {
     }
 
     public boolean createAccount(UUID uuid) {
-        boolean update = database.executeUpdate("INSERT INTO economy.accounts (mojang_uuid) VALUES ('" + uuid.toString() + "');");
+        boolean update = database.executeUpdate("INSERT INTO economy_accounts (mojang_uuid) VALUES ('" + uuid.toString() + "');");
         if(update) {
             accounts.add(uuid);
         }
@@ -74,14 +74,14 @@ public class StorageManager {
         double balance = this.getBalance(uuid);
         double updatedBalance = balance - amount;
         Date date = new Date();
-        return database.executeUpdate("UPDATE economy.accounts SET balance = " + updatedBalance + ", last_withdraw_value = " + amount + ", last_withdraw_date = now() where mojang_uuid = '" + uuid.toString() + "';");
+        return database.executeUpdate("UPDATE economy_accounts SET balance = " + updatedBalance + ", last_withdraw_value = " + amount + ", last_withdraw_date = CURRENT_TIMESTAMP where mojang_uuid = '" + uuid.toString() + "';");
     }
 
     public boolean deposit(UUID uuid, double amount) {
         double balance = this.getBalance(uuid);
         double updatedBalance = balance + amount;
         Date date = new Date();
-        return database.executeUpdate("UPDATE economy.accounts SET balance = " + updatedBalance + ", last_deposit_value = " + amount + ", last_deposit_date = now() where mojang_uuid = '" + uuid.toString() + "';");
+        return database.executeUpdate("UPDATE economy_accounts SET balance = " + updatedBalance + ", last_deposit_value = " + amount + ", last_deposit_date = CURRENT_TIMESTAMP where mojang_uuid = '" + uuid.toString() + "';");
     }
 
 }

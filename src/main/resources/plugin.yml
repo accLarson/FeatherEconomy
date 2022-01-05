@@ -3,6 +3,8 @@ version: ${project.version}
 main: com.wasted_ticks.feathereconomy.FeatherEconomy
 api-version: 1.18
 loadbefore: [Vault]
+depend:
+  - Vault
 commands:
   balance:
     description: View your balance

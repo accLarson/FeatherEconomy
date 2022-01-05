@@ -1,7 +1,8 @@
 settings:
   mysql:
-    host: localhost
+    enabled: false
+    host: 'localhost'
     port: 3306
-    username: 'feather_economy'
-    password: 'minecraft'
+    username: ''
+    password: ''
     database: 'economy'

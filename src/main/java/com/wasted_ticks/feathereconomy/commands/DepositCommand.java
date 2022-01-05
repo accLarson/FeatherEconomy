@@ -47,11 +47,22 @@ public class DepositCommand implements CommandExecutor {
                 return true;
             }
 
-            Integer amount = this.parseAmount(args[0]);
-            if(amount == null || amount < 1) {
-                player.sendMessage(messages.get("economy_error_non-number"));
-                return true;
+            Integer amount = 0;
+            if(args[0].equalsIgnoreCase("all")) {
+                for(ItemStack stack : player.getInventory().getContents()) {
+                    if(stack != null && stack.getType().equals(Material.LAPIS_LAZULI)) {
+                        amount += stack.getAmount();
+                    }
+                }
+            } else {
+                amount = this.parseAmount(args[0]);
+                if(amount == null || amount < 1) {
+                    player.sendMessage(messages.get("economy_error_non-number"));
+                    return true;
+                }
+
             }
+
 
             if (player.getInventory().containsAtLeast(new ItemStack(Material.LAPIS_LAZULI), amount)) {
 
