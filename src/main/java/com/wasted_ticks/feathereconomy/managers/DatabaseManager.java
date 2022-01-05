@@ -50,8 +50,10 @@ public class DatabaseManager {
             DatabaseManager.connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException | ClassNotFoundException exception) {
             plugin.getLog().severe("[FeatherEconomy] Unable to initialize connection.");
-            plugin.getLog().severe("[FeatherEconomy] Ensure connection can be made with provided mysql strings.");
+            plugin.getLog().severe("[FeatherEconomy] Ensure connection can be made with provided MySQL strings.");
             plugin.getLog().severe("[FeatherEconomy] Connection URL: " + url);
+            plugin.getLog().severe("[FeatherEconomy] Defaulting to local SQLite storage.");
+            this.initSQLiteConnection();
         }
 
     }
