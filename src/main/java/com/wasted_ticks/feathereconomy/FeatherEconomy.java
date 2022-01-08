@@ -4,6 +4,9 @@ import com.wasted_ticks.feathereconomy.commands.BalanceCommand;
 import com.wasted_ticks.feathereconomy.commands.DepositCommand;
 import com.wasted_ticks.feathereconomy.commands.TransferCommand;
 import com.wasted_ticks.feathereconomy.commands.WithdrawCommand;
+import com.wasted_ticks.feathereconomy.commands.completers.DepositCompleter;
+import com.wasted_ticks.feathereconomy.commands.completers.TransferCompleter;
+import com.wasted_ticks.feathereconomy.commands.completers.WithdrawCompleter;
 import com.wasted_ticks.feathereconomy.config.FeatherEconomyConfig;
 import com.wasted_ticks.feathereconomy.config.FeatherEconomyMessages;
 import com.wasted_ticks.feathereconomy.listeners.EntityDropItemListener;
@@ -64,9 +67,16 @@ public final class FeatherEconomy extends JavaPlugin {
 
     private void registerCommands() {
         this.getCommand("balance").setExecutor(new BalanceCommand(this));
+
         this.getCommand("deposit").setExecutor(new DepositCommand(this));
+        this.getCommand("deposit").setTabCompleter(new DepositCompleter(this));
+
         this.getCommand("transfer").setExecutor(new TransferCommand(this));
+        this.getCommand("transfer").setTabCompleter(new TransferCompleter(this));
+
         this.getCommand("withdraw").setExecutor(new WithdrawCommand(this));
+        this.getCommand("withdraw").setTabCompleter(new WithdrawCompleter(this));
+
 
     }
 
