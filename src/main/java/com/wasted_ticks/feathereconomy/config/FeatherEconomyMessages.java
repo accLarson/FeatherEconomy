@@ -4,8 +4,9 @@ import com.wasted_ticks.feathereconomy.FeatherEconomy;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.transformation.TransformationType;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,8 +15,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FeatherEconomyMessages {
 
@@ -59,23 +62,34 @@ public class FeatherEconomyMessages {
 
     public TextComponent get(String key){
         if(messages.containsKey(key)) {
-            return (TextComponent) MiniMessage.builder()
-                    .removeDefaultTransformations()
-                    .transformation(TransformationType.COLOR)
-                    .transformation(TransformationType.RESET)
-                    .build()
-                    .parse(messages.get(key));
+            MiniMessage parser = MiniMessage.builder().tags(
+                    TagResolver.builder()
+                            .resolver(StandardTags.color())
+                            .resolver(StandardTags.reset())
+                            .build()
+            ).build();
+            return (TextComponent) parser.deserialize(messages.get(key));
         } else return Component.text("");
     }
 
     public TextComponent get(String key, Map<String, String> placeholders) {
         if(messages.containsKey(key)) {
-            return (TextComponent) MiniMessage.builder()
-                    .removeDefaultTransformations()
-                    .transformation(TransformationType.COLOR)
-                    .transformation(TransformationType.RESET)
-                    .build()
-                    .parse(messages.get(key), placeholders);
+
+            MiniMessage parser = MiniMessage.builder().tags(
+                    TagResolver.builder()
+                            .resolver(StandardTags.color())
+                            .resolver(StandardTags.reset())
+                            .build()
+            ).build();
+
+            List<TagResolver> rs = placeholders
+                    .entrySet()
+                    .stream()
+                    .map(entry -> (TagResolver) Placeholder.parsed(entry.getKey(), entry.getValue()))
+                    .collect(Collectors.toList());
+
+            return (TextComponent) parser.deserialize(messages.get(key), TagResolver.resolver(rs));
+
         } else return Component.text("");
     }
 }
