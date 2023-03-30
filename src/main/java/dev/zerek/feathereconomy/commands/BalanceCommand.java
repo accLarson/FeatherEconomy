@@ -41,7 +41,7 @@ public class BalanceCommand implements CommandExecutor {
         }
 
         if(args.length == 1) {
-            if(!player.hasPermission("feather.economy.balance.other")) {
+            if(!player.hasPermission("feather.economy.balance.others")) {
                 player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }

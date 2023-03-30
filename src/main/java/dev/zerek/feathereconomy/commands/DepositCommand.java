@@ -87,7 +87,7 @@ public class DepositCommand implements CommandExecutor {
         }
 
         if(args.length == 2) {
-            if(!player.hasPermission("feather.economy.deposit.other")) {
+            if(!player.hasPermission("feather.economy.deposit.others")) {
                 player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }

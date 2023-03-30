@@ -1,15 +1,26 @@
 # FeatherEconomy
 
-FeatheEconomy is a spigot plugin for adding an item based economy to minecraft servers.
+FeatherEconomy is a spigot plugin for adding an item based economy to minecraft servers.  
+Currently hardcoded to use lapis lazuli as a currency.  
+Players can deposit and withdraw lapis between their inventory and their account.  
+Players can transfer lapis to other players from account to account.
 
-Depends on Vault.
+Support for MySQL/MariaDB or built in SQLite.
 
-### Features
+### Dependencies:
+This plugin depends on [Vault](https://github.com/milkbowl/Vault) 
 
-Support for MySQL/MariaDB or built in SQLite.  
 
-### TODO:
+### Permission Nodes:
+    Suggested player permission nodes:
 
-- By default it'll use Material.LAPIS_LAZULI for transactions, this can be changed pretty easily. I should add this to the config.yml so users can change this without having to recompile.
-- Permission nodes.
-- PAPI support
+    feather.economy.deposit          -  /deposit [amount]            -  Move lapis: inv -> account.
+    feather.economy.balance          -  /balance                     -  Check account balance.
+    feather.economy.withdraw         -  /withdraw [amount]           -  Move lapis: account -> inv.
+    feather.economy.transfer         -  /transfer [amount] [player]  -  Send lapis to another player.
+    
+    Suggested administrator permission nodes:
+
+    feather.economy.deposit.others   -  /deposit [amount] [player]   -  Deposit lapis to a player.
+    feather.economy.balance.others   -  /balance [player]            -  Check a players balance.
+    feather.economy.withdraw.others  -  /withdraw [amount] [player]  -  Withdraw lapis from a player.

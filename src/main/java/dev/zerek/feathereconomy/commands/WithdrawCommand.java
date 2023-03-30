@@ -76,7 +76,7 @@ public class WithdrawCommand implements CommandExecutor {
         }
 
         if(args.length == 2) {
-            if(!player.hasPermission("feather.economy.deposit.other")) {
+            if(!player.hasPermission("feather.economy.withdraw.others")) {
                 player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }
