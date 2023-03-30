@@ -49,8 +49,7 @@ public class BalanceCommand implements CommandExecutor {
 
                 // Checks passed ----------------------------------------------------------------
 
-                sender.sendMessage(messages.get("Balance", Map.of(
-                        "balance",String.valueOf((int) this.plugin.getEconomy().getBalance((OfflinePlayer) sender)))));
+                sender.sendMessage(messages.get("Balance", Map.of("balance",String.valueOf((int) plugin.getEconomy().getBalance((OfflinePlayer) sender)))));
 
                 return true;
 
@@ -66,7 +65,7 @@ public class BalanceCommand implements CommandExecutor {
 
                 OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
 
-                if(plugin.getStorage().hasAccount(target.getUniqueId())) {
+                if(plugin.getEconomy().hasAccount(target)) {
 
                     sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
 
@@ -75,15 +74,14 @@ public class BalanceCommand implements CommandExecutor {
 
                 // Checks passed ----------------------------------------------------------------
 
-                sender.sendMessage(messages.get("BalanceOther", Map.of(
-                        "player", target.getName(),
-                        "balance", String.valueOf((int) this.plugin.getEconomy().getBalance(target))
-                )));
+                sender.sendMessage(messages.get("BalanceOther", Map.of("player", target.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target)))));
 
                 return true;
         }
 
-        sender.sendMessage(messages.get("BalanceUsage"));
+        if(sender.hasPermission("feather.economy.balance.others")) sender.sendMessage(messages.get("BalanceUsageOthers"));
+
+        else if(sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("BalanceUsage"));
 
         return true;
     }

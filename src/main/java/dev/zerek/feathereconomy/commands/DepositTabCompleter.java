@@ -27,27 +27,42 @@ public class DepositTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
 
-        if(args.length == 1) {
+        // /deposit [amount]
+        if (args.length == 1) {
+
+            // Check if sender has permission
+            if (!sender.hasPermission("feather.economy.deposit")) return new ArrayList<>();
 
             ArrayList<String> suggestions = new ArrayList<>();
 
-            if(sender instanceof Player) {
+            if (sender instanceof Player) {
 
                 Player player = (Player) sender;
 
                 Integer amount = 0;
 
-                for(ItemStack stack : player.getInventory().getContents()) {
+                for (ItemStack itemStack : player.getInventory().getContents()) {
 
-                    if(stack != null && stack.getType().equals(Material.LAPIS_LAZULI)) amount += stack.getAmount();
+                    if (itemStack != null && itemStack.getType().equals(Material.LAPIS_LAZULI)) amount += itemStack.getAmount();
                 }
 
-                if(amount != 0) StringUtil.copyPartialMatches(args[0], new ArrayList<>(List.of(String.valueOf(amount))), suggestions);
+                if (amount != 0) suggestions.add(String.valueOf(amount));
+
+                else return new ArrayList<>();
             }
 
             return suggestions;
         }
 
-        return null;
+        // /deposit [amount] [player]
+        else if (args.length == 2){
+
+            // Check if sender has permission
+            if (!sender.hasPermission("feather.economy.deposit.other")) return new ArrayList<>();
+
+            return null;
+        }
+
+        return new ArrayList<>();
     }
 }
