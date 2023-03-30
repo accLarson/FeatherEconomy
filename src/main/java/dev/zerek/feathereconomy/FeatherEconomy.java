@@ -22,8 +22,6 @@ public final class FeatherEconomy extends JavaPlugin {
     private EconomyServiceProvider economy;
     private StorageManager storage;
 
-    private static final Logger logger = Logger.getLogger("Minecraft");
-
     @Override
     public void onEnable() {
 
@@ -61,7 +59,7 @@ public final class FeatherEconomy extends JavaPlugin {
 
         RegisteredServiceProvider<Economy> provider = getServer().getServicesManager().getRegistration(Economy.class);
 
-        if(provider == null) this.getLog().severe("[FeatherEconomy] Unable to hook into Vault.");
+        if(provider == null) this.getLogger().severe("Unable to hook into Vault.");
     }
 
     @Override
@@ -87,9 +85,4 @@ public final class FeatherEconomy extends JavaPlugin {
     }
 
     public StorageManager getStorage() { return this.storage; }
-
-    public Logger getLog() {
-        return logger;
-    }
-
 }

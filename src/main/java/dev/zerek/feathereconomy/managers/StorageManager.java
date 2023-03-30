@@ -29,7 +29,7 @@ public class StorageManager {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed to init storage.");
+            plugin.getLogger().severe("Failed to init storage.");
             e.printStackTrace();
         }
     }
@@ -45,7 +45,7 @@ public class StorageManager {
                     return true;
                 }
             } catch (SQLException e) {
-                plugin.getLog().severe("[FeatherEconomy] Failed query storage for account (hasAccount): " + uuid);
+                plugin.getLogger().severe("Failed query storage for account (hasAccount): " + uuid);
             }
         }
         return false;
@@ -58,7 +58,7 @@ public class StorageManager {
                 return results.getDouble("balance");
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed query storage for account (getBalance): " + uuid);
+            plugin.getLogger().severe("Failed query storage for account (getBalance): " + uuid);
         }
         return 0.0f;
     }

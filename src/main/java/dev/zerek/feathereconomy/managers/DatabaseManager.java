@@ -49,10 +49,10 @@ public class DatabaseManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
             DatabaseManager.connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException | ClassNotFoundException exception) {
-            plugin.getLog().severe("[FeatherEconomy] Unable to initialize connection.");
-            plugin.getLog().severe("[FeatherEconomy] Ensure connection can be made with provided MySQL strings.");
-            plugin.getLog().severe("[FeatherEconomy] Connection URL: " + url);
-            plugin.getLog().severe("[FeatherEconomy] Defaulting to local SQLite storage.");
+            plugin.getLogger().severe("Unable to initialize connection.");
+            plugin.getLogger().severe("Ensure connection can be made with provided MySQL strings.");
+            plugin.getLogger().severe("Connection URL: " + url);
+            plugin.getLogger().severe("Defaulting to local SQLite storage.");
             this.initSQLiteConnection();
         }
 
@@ -67,7 +67,7 @@ public class DatabaseManager {
         try {
             this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
         } catch (SQLException sQLException) {
-            plugin.getLog().severe("[FeatherEconomy] Unable to initialize connection.");
+            plugin.getLogger().severe("Unable to initialize connection.");
         }
     }
 
@@ -79,7 +79,7 @@ public class DatabaseManager {
                 }
             }
         } catch (SQLException exception) {
-            plugin.getLog().severe("[FeatherEconomy] Unable to close connection.");
+            plugin.getLogger().severe("Unable to close connection.");
         }
     }
 
@@ -92,14 +92,14 @@ public class DatabaseManager {
                 return false;
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Unable to query table metadata.");
+            plugin.getLogger().severe("Unable to query table metadata.");
             return false;
         }
     }
 
     private void initTables() {
         if(!this.existsTable("economy_accounts")) {
-            plugin.getLog().info("[FeatherEconomy] Creating economy_accounts table.");
+            plugin.getLogger().info("Creating economy_accounts table.");
             String query = "CREATE TABLE IF NOT EXISTS `economy_accounts` ("
                     + " `mojang_uuid` VARCHAR(255) PRIMARY KEY, "
                     + " `balance` double(64,2) NOT NULL DEFAULT 0, "
@@ -114,7 +114,7 @@ public class DatabaseManager {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                plugin.getLog().severe("[FeatherEconomy] Unable to create feather_clans table.");
+                plugin.getLogger().severe("Unable to create feather_clans table.");
             }
         }
     }
@@ -130,7 +130,7 @@ public class DatabaseManager {
             statement.close();
             return true;
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed to execute update: ||| " + update + " |||");
+            plugin.getLogger().severe("Failed to execute update: ||| " + update + " |||");
             return false;
         }
     }
@@ -142,7 +142,7 @@ public class DatabaseManager {
         try {
             return DatabaseManager.connection.createStatement().executeQuery(query);
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed to execute query: ||| " + query + " |||");
+            plugin.getLogger().severe("Failed to execute query: ||| " + query + " |||");
             return null;
         }
     }
