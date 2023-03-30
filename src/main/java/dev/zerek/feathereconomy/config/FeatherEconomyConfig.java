@@ -1,6 +1,6 @@
-package com.wasted_ticks.feathereconomy.config;
+package dev.zerek.feathereconomy.config;
 
-import com.wasted_ticks.feathereconomy.FeatherEconomy;
+import dev.zerek.feathereconomy.FeatherEconomy;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class FeatherEconomyConfig {

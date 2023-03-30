@@ -1,7 +1,8 @@
 name: FeatherEconomy
 version: ${project.version}
-main: com.wasted_ticks.feathereconomy.FeatherEconomy
-api-version: 1.18
+main: dev.zerek.feathereconomy.FeatherEconomy
+api-version: 1.19
+authors: [ Wasted_Ticks, Zerek ]
 loadbefore: [Vault]
 depend:
   - Vault

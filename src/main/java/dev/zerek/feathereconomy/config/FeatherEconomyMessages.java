@@ -1,6 +1,6 @@
-package com.wasted_ticks.feathereconomy.config;
+package dev.zerek.feathereconomy.config;
 
-import com.wasted_ticks.feathereconomy.FeatherEconomy;
+import dev.zerek.feathereconomy.FeatherEconomy;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -25,8 +25,6 @@ public class FeatherEconomyMessages {
     private final FeatherEconomy plugin;
     private final Map<String, String> messages;
     private FileConfiguration config;
-    private String themePrimary;
-    private String themeSecondary;
 
     public FeatherEconomyMessages(FeatherEconomy plugin) {
         messages = new HashMap<>();
@@ -55,7 +53,7 @@ public class FeatherEconomyMessages {
         config.setDefaults(defaultConfig);
         try {
             config.save(file);
-        } catch (IOException e) {}
+        } catch (IOException ignored) {}
 
         this.config = YamlConfiguration.loadConfiguration(file);
     }

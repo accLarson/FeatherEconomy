@@ -1,6 +1,6 @@
-package com.wasted_ticks.feathereconomy.managers;
+package dev.zerek.feathereconomy.managers;
 
-import com.wasted_ticks.feathereconomy.FeatherEconomy;
+import dev.zerek.feathereconomy.FeatherEconomy;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +13,7 @@ public class StorageManager {
     private final DatabaseManager database;
 
     public StorageManager(FeatherEconomy plugin) {
+
         this.plugin = plugin;
         this.database = plugin.getDatabaseManager();
         this.accounts = new HashSet<>();
@@ -44,7 +45,7 @@ public class StorageManager {
                     return true;
                 }
             } catch (SQLException e) {
-                plugin.getLog().severe("[FeatherEconomy] Failed query storage for account (hasAccount): " + uuid.toString());
+                plugin.getLog().severe("[FeatherEconomy] Failed query storage for account (hasAccount): " + uuid);
             }
         }
         return false;
@@ -57,7 +58,7 @@ public class StorageManager {
                 return results.getDouble("balance");
             }
         } catch (SQLException e) {
-            plugin.getLog().severe("[FeatherEconomy] Failed query storage for account (getBalance): " + uuid.toString());
+            plugin.getLog().severe("[FeatherEconomy] Failed query storage for account (getBalance): " + uuid);
         }
         return 0.0f;
     }
@@ -74,14 +75,14 @@ public class StorageManager {
         double balance = this.getBalance(uuid);
         double updatedBalance = balance - amount;
         Date date = new Date();
-        return database.executeUpdate("UPDATE economy_accounts SET balance = " + updatedBalance + ", last_withdraw_value = " + amount + ", last_withdraw_date = CURRENT_TIMESTAMP where mojang_uuid = '" + uuid.toString() + "';");
+        return database.executeUpdate("UPDATE economy_accounts SET balance = " + updatedBalance + ", last_withdraw_value = " + amount + ", last_withdraw_date = CURRENT_TIMESTAMP where mojang_uuid = '" + uuid + "';");
     }
 
     public boolean deposit(UUID uuid, double amount) {
         double balance = this.getBalance(uuid);
         double updatedBalance = balance + amount;
         Date date = new Date();
-        return database.executeUpdate("UPDATE economy_accounts SET balance = " + updatedBalance + ", last_deposit_value = " + amount + ", last_deposit_date = CURRENT_TIMESTAMP where mojang_uuid = '" + uuid.toString() + "';");
+        return database.executeUpdate("UPDATE economy_accounts SET balance = " + updatedBalance + ", last_deposit_value = " + amount + ", last_deposit_date = CURRENT_TIMESTAMP where mojang_uuid = '" + uuid + "';");
     }
 
 }

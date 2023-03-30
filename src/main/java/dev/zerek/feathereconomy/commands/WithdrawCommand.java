@@ -1,7 +1,7 @@
-package com.wasted_ticks.feathereconomy.commands;
+package dev.zerek.feathereconomy.commands;
 
-import com.wasted_ticks.feathereconomy.FeatherEconomy;
-import com.wasted_ticks.feathereconomy.config.FeatherEconomyMessages;
+import dev.zerek.feathereconomy.FeatherEconomy;
+import dev.zerek.feathereconomy.config.FeatherEconomyMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -35,7 +35,7 @@ public class WithdrawCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(!(sender instanceof Player)) {
-            sender.sendMessage(messages.get("economy_error_player"));
+            sender.sendMessage(messages.get("ErrorNotPlayer"));
             return true;
         }
 
@@ -43,13 +43,13 @@ public class WithdrawCommand implements CommandExecutor {
 
         if(args.length == 1) {
             if(!player.hasPermission("feather.economy.withdraw")) {
-                player.sendMessage(messages.get("economy_error_permission"));
+                player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }
 
             Integer amount = this.parseAmount(args[0]);
             if(amount == null || amount < 1) {
-                player.sendMessage(messages.get("economy_error_non-number"));
+                player.sendMessage(messages.get("ErrorNotNumber"));
                 return true;
             }
 
@@ -59,38 +59,38 @@ public class WithdrawCommand implements CommandExecutor {
                 if (!stack.isEmpty()) {
                     int refund = (stack.get(0)).getAmount();
                     this.plugin.getEconomy().depositPlayer(player, refund);
-                    player.sendMessage(messages.get("economy_withdraw_incomplete"));
+                    player.sendMessage(messages.get("WithdrawIncomplete"));
                 } else {
-                    player.sendMessage(messages.get("economy_withdraw_success", Map.of(
+                    player.sendMessage(messages.get("Withdraw", Map.of(
                             "amount", String.valueOf(amount)
                     )));
                 }
                 double balance = this.plugin.getEconomy().getBalance(player);
-                player.sendMessage(messages.get("economy_balance_display", Map.of(
+                player.sendMessage(messages.get("Balance", Map.of(
                         "balance", String.valueOf((int) balance)
                 )));
             } else {
-                player.sendMessage(messages.get("economy_withdraw_insufficient"));
+                player.sendMessage(messages.get("WithdrawInsufficient"));
             }
             return true;
         }
 
         if(args.length == 2) {
             if(!player.hasPermission("feather.economy.deposit.other")) {
-                player.sendMessage(messages.get("economy_error_permission"));
+                player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }
 
             Integer amount = this.parseAmount(args[0]);
             if(amount == null || amount < 1) {
-                player.sendMessage(messages.get("economy_error_non-number"));
+                player.sendMessage(messages.get("ErrorNotNumber"));
                 return true;
             }
 
             String name = args[1];
             Player target = Bukkit.getPlayer(name);
             if(target == null) {
-                player.sendMessage(messages.get("economy_error_unresolved_player"));
+                player.sendMessage(messages.get("ErrorUnresolvedPlayer"));
                 return true;
             }
 
@@ -98,25 +98,25 @@ public class WithdrawCommand implements CommandExecutor {
 
                 this.plugin.getEconomy().withdrawPlayer(target, amount);
 
-                player.sendMessage(messages.get("economy_withdraw_success_other", Map.of(
+                player.sendMessage(messages.get("WithdrawOther", Map.of(
                         "amount", String.valueOf(amount),
                         "player", target.getName()
                 )));
 
                 double balance = this.plugin.getEconomy().getBalance(target);
-                player.sendMessage(messages.get("economy_balance_display_other", Map.of(
+                player.sendMessage(messages.get("BalanceOther", Map.of(
                         "player", target.getName(),
                         "balance", String.valueOf((int) balance)
                 )));
             } else {
-                player.sendMessage(messages.get("economy_withdraw_insufficient_other", Map.of(
+                player.sendMessage(messages.get("WithdrawOtherInsufficient", Map.of(
                         "player", target.getName()
                 )));
             }
             return true;
         }
 
-        player.sendMessage(messages.get("economy_withdraw_usage"));
+        player.sendMessage(messages.get("WithdrawUsage"));
         return true;
     }
 

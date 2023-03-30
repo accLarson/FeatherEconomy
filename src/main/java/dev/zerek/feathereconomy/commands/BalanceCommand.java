@@ -1,7 +1,7 @@
-package com.wasted_ticks.feathereconomy.commands;
+package dev.zerek.feathereconomy.commands;
 
-import com.wasted_ticks.feathereconomy.FeatherEconomy;
-import com.wasted_ticks.feathereconomy.config.FeatherEconomyMessages;
+import dev.zerek.feathereconomy.FeatherEconomy;
+import dev.zerek.feathereconomy.config.FeatherEconomyMessages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,7 +24,7 @@ public class BalanceCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(!(sender instanceof Player)) {
-            sender.sendMessage(messages.get("economy_error_player"));
+            sender.sendMessage(messages.get("ErrorNotPlayer"));
             return true;
         }
 
@@ -32,35 +32,35 @@ public class BalanceCommand implements CommandExecutor {
 
         if(args.length == 0) {
             if(!player.hasPermission("feather.economy.balance")) {
-                player.sendMessage(messages.get("economy_error_permission"));
+                player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }
             double balance = this.plugin.getEconomy().getBalance(player);
-            player.sendMessage(messages.get("economy_balance_display", Map.of("balance",String.valueOf((int) balance))));
+            player.sendMessage(messages.get("Balance", Map.of("balance",String.valueOf((int) balance))));
             return true;
         }
 
         if(args.length == 1) {
             if(!player.hasPermission("feather.economy.balance.other")) {
-                player.sendMessage(messages.get("economy_error_permission"));
+                player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }
             String name = args[0];
             Player target = Bukkit.getPlayer(name);
             if(target == null) {
-                player.sendMessage(messages.get("economy_error_unresolved_player"));
+                player.sendMessage(messages.get("ErrorUnresolvedPlayer"));
                 return true;
             }
 
             double balance = this.plugin.getEconomy().getBalance(target);
-            player.sendMessage(messages.get("economy_balance_display_other", Map.of(
+            player.sendMessage(messages.get("BalanceOther", Map.of(
                     "player", target.getName(),
                     "balance", String.valueOf((int) balance)
             )));
             return true;
         }
 
-        player.sendMessage(messages.get("economy_balance_usage"));
+        player.sendMessage(messages.get("BalanceUsage"));
         return true;
     }
 

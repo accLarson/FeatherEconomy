@@ -1,7 +1,7 @@
-package com.wasted_ticks.feathereconomy.managers;
+package dev.zerek.feathereconomy.managers;
 
-import com.wasted_ticks.feathereconomy.FeatherEconomy;
-import com.wasted_ticks.feathereconomy.config.FeatherEconomyConfig;
+import dev.zerek.feathereconomy.FeatherEconomy;
+import dev.zerek.feathereconomy.config.FeatherEconomyConfig;
 
 import javax.xml.crypto.Data;
 import java.io.File;
@@ -123,7 +123,7 @@ public class DatabaseManager {
         if(DatabaseManager.connection == null) {
             return false;
         }
-        Statement statement = null;
+        Statement statement;
         try {
             statement = DatabaseManager.connection.createStatement();
             statement.executeUpdate(update);

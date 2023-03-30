@@ -1,4 +1,4 @@
-package com.wasted_ticks.feathereconomy;
+package dev.zerek.feathereconomy;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
