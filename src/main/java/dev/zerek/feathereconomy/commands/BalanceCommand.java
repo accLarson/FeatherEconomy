@@ -3,6 +3,7 @@ package dev.zerek.feathereconomy.commands;
 import dev.zerek.feathereconomy.FeatherEconomy;
 import dev.zerek.feathereconomy.config.FeatherEconomyMessages;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,54 +15,76 @@ import java.util.Map;
 public class BalanceCommand implements CommandExecutor {
 
     private final FeatherEconomy plugin;
+
     private final FeatherEconomyMessages messages;
 
     public BalanceCommand(FeatherEconomy plugin) {
+
         this.plugin = plugin;
+
         this.messages = plugin.getFeatherEconomyMessages();
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!(sender instanceof Player)) {
-            sender.sendMessage(messages.get("ErrorNotPlayer"));
-            return true;
+
+        switch (args.length) {
+
+            // /balance
+            case 0:
+
+                if(!(sender instanceof Player)) {
+
+                    sender.sendMessage(messages.get("ErrorNotPlayer"));
+
+                    return true;
+                }
+
+                if(!sender.hasPermission("feather.economy.balance")) {
+
+                    sender.sendMessage(messages.get("ErrorNoPermission"));
+
+                    return true;
+                }
+
+                // Checks passed ----------------------------------------------------------------
+
+                sender.sendMessage(messages.get("Balance", Map.of(
+                        "balance",String.valueOf((int) this.plugin.getEconomy().getBalance((OfflinePlayer) sender)))));
+
+                return true;
+
+            // /balance [player]
+            case 1:
+
+                if(!sender.hasPermission("feather.economy.balance.others")) {
+
+                    sender.sendMessage(messages.get("ErrorNoPermission"));
+
+                    return true;
+                }
+
+                OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
+
+                if(plugin.getStorage().hasAccount(target.getUniqueId())) {
+
+                    sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
+
+                    return true;
+                }
+
+                // Checks passed ----------------------------------------------------------------
+
+                sender.sendMessage(messages.get("BalanceOther", Map.of(
+                        "player", target.getName(),
+                        "balance", String.valueOf((int) this.plugin.getEconomy().getBalance(target))
+                )));
+
+                return true;
         }
 
-        Player player = (Player) sender;
+        sender.sendMessage(messages.get("BalanceUsage"));
 
-        if(args.length == 0) {
-            if(!player.hasPermission("feather.economy.balance")) {
-                player.sendMessage(messages.get("ErrorNoPermission"));
-                return true;
-            }
-            double balance = this.plugin.getEconomy().getBalance(player);
-            player.sendMessage(messages.get("Balance", Map.of("balance",String.valueOf((int) balance))));
-            return true;
-        }
-
-        if(args.length == 1) {
-            if(!player.hasPermission("feather.economy.balance.others")) {
-                player.sendMessage(messages.get("ErrorNoPermission"));
-                return true;
-            }
-            String name = args[0];
-            Player target = Bukkit.getPlayer(name);
-            if(target == null) {
-                player.sendMessage(messages.get("ErrorUnresolvedPlayer"));
-                return true;
-            }
-
-            double balance = this.plugin.getEconomy().getBalance(target);
-            player.sendMessage(messages.get("BalanceOther", Map.of(
-                    "player", target.getName(),
-                    "balance", String.valueOf((int) balance)
-            )));
-            return true;
-        }
-
-        player.sendMessage(messages.get("BalanceUsage"));
         return true;
     }
-
 }
