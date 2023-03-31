@@ -2,23 +2,44 @@ ErrorNotPlayer: "Error: You must be a player to use this command."
 ErrorNoPermission: "<#6C719D>Error: You do not have permission to use this command."
 ErrorUnresolvedPlayer: "<#6C719D>Error: Unable to resolve requested username."
 ErrorNotNumber: "<#6C719D>Error: amount must be a non-zero integer."
+
 Balance: "<#6C719D>Your current balance is: <#949bd1><balance> Lapis<#6C719D>."
-BalanceOther: "<#6C719D><player>'s current balance is: <#949bd1><balance> Lapis<#6C719D>."
 BalanceUsage: "/balance"
-BalanceOtherUsage: "/balance <player>"
-DepositInsufficient: "<#6C719D>You do not have sufficient Lapis in your inventory to complete this deposit."
+
 Deposit: "<#949bd1><amount> Lapis<#6C719D> has been deposited into your account."
-DepositOther: "<#6C719D>You deposited <#949bd1><amount> Lapis<#6C719D> into <#949bd1><player>'s<#6C719D> account."
 DepositUsage: "/deposit [amount]"
-DepositOtherUsage: "/deposit [amount] <player>"
-TransferUsage: "/transfer [amount] [player]"
-TransferInsufficient: "<#6C719D>You do not have sufficient Lapis in your account to complete this transfer."
+DepositInsufficient: "<#6C719D>You do not have sufficient Lapis in your inventory to complete this deposit."
+
 TransferSent: "<#6C719D>You transferred <#949bd1><amount> Lapis<#6C719D> into <#949bd1><player>'s<#6C719D> account."
+TransferUsage: "/transfer [amount] [player]"
 TransferReceived: "<#846d91><player><#c0a1d1> has transferred <#846d91><amount><#c0a1d1> Lapis into your account."
+TransferInsufficient: "<#6C719D>You do not have sufficient Lapis in your account to complete this transfer."
+
+Withdraw: "<#949bd1><amount> Lapis<#6C719D> has been withdrawn from your account."
+WithdrawUsage: "/withdraw [amount]"
 WithdrawIncomplete: "<#6C719D>Unable to withdraw full amount, withdrew: <withdrew>. Requested: <total>."
 WithdrawInsufficient: "<#6C719D>You do not have sufficient Lapis in your account to complete this withdraw."
-Withdraw: "<#949bd1><amount> Lapis<#6C719D> has been withdrawn from your account."
-WithdrawOther: "<#6C719D>You have withdrawn <#949bd1><amount> Lapis<#6C719D> from <#949bd1><player>'s<#6C719D> account."
-WithdrawOtherInsufficient: "<#949bd1><player><#6C719D> does not have sufficient Lapis in their account to complete this withdraw."
-WithdrawUsage: "/withdraw [amount]"
-WithdrawOtherUsage: "/withdraw [amount] <player>"
+
+#Staff permission messages:
+
+ManageBalanceView: "<#6C719D><player>'s current balance is: <#949bd1><balance> Lapis<#6C719D>."
+
+ManageBalanceRemove: "<#6C719D>You removed <#949bd1><amount> Lapis<#6C719D> from <#949bd1><player>'s<#6C719D> account."
+ManageBalanceRemoveUsage: "/managebalance [player] remove [amount]"
+ManageBalanceRemoveInsufficient: "<#949bd1><player><#6C719D> does not have sufficient Lapis in their account to complete this removal."
+ManageBalanceRemoveInform: "<#949bd1><amount> Lapis<#6C719D> has been removed from your account."
+
+ManageBalanceAdd: "<#6C719D>You added <#949bd1><amount> Lapis<#6C719D> into <#949bd1><player>'s<#6C719D> account."
+ManageBalanceAddUsage: "/managebalance [player] add [amount]"
+ManageBalanceAddInform: "<#949bd1><amount> Lapis<#6C719D> has been added to your account."
+
+ManageBalanceSet: "<#6C719D>You set <#949bd1><player>'s<#6C719D> balance to <#949bd1><amount> Lapis<#6C719D>."
+ManageBalanceSetUsage: "/managebalance [player] set [amount]"
+ManageBalanceSetInform: "<#6C719D>Your balance has been set to <#949bd1><amount> Lapis<#6C719D>."
+
+ManageBalanceEmpty: "<#6C719D>You emptied <#949bd1><player>'s<#6C719D> account balance."
+ManageBalanceEmptyUsage: "/managebalance [player] empty"
+ManageBalanceEmptyInform: "<#6C719D>Your account balance has been emptied."
+
+
+  #[balance/remove/add/set/empty]
