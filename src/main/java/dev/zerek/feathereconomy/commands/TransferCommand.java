@@ -2,7 +2,6 @@ package dev.zerek.feathereconomy.commands;
 
 import dev.zerek.feathereconomy.FeatherEconomy;
 import dev.zerek.feathereconomy.config.FeatherEconomyMessages;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,69 +13,90 @@ import java.util.Map;
 public class TransferCommand implements CommandExecutor {
 
     private final FeatherEconomy plugin;
+
     private final FeatherEconomyMessages messages;
 
     public TransferCommand(FeatherEconomy plugin) {
+
         this.plugin = plugin;
+
         this.messages = plugin.getFeatherEconomyMessages();
     }
 
     private Integer parseAmount(String amount) {
+        
         try {
+
             return Integer.parseInt(amount);
-        } catch(NumberFormatException e) {
+        }
+
+        catch (NumberFormatException e) {
+
             return null;
         }
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!(sender instanceof Player)) {
+        
+        if (!(sender instanceof Player)) {
+            
             sender.sendMessage(messages.get("ErrorNotPlayer"));
+            
             return true;
         }
 
         Player player = (Player) sender;
-        if(!player.hasPermission("feather.economy.transfer")) {
+        
+        if (!player.hasPermission("feather.economy.transfer")) {
+            
             player.sendMessage(messages.get("ErrorNoPermission"));
+            
             return true;
         }
 
-        if(args.length != 2) {
+        if (args.length != 2) {
+
             player.sendMessage(messages.get("TransferUsage"));
+
             return true;
         }
 
         Integer amount = this.parseAmount(args[0]);
-        if(amount == null || amount < 1) {
+
+        if (amount == null || amount < 1) {
+
             player.sendMessage(messages.get("ErrorNotNumber"));
+
             return true;
         }
 
-        String name = args[1];
-        Player target = Bukkit.getPlayer(name);
-        if(target == null) {
+        Player target = plugin.getServer().getPlayer(args[1]);
+
+        if (target == null) {
+
             player.sendMessage(messages.get("ErrorUnresolvedPlayer"));
+
             return true;
         }
 
-        if(this.plugin.getEconomy().has(player, amount)) {
+        if (!plugin.getEconomy().has(player, amount)) {
 
-            this.plugin.getEconomy().depositPlayer(target, amount);
-            this.plugin.getEconomy().withdrawPlayer(player, amount);
-
-            target.sendMessage(messages.get("TransferReceived", Map.of(
-                    "player", player.getName(),
-                    "amount", String.valueOf(amount)
-            )));
-            player.sendMessage(messages.get("TransferSent", Map.of(
-                    "amount", String.valueOf(amount),
-                    "player", target.getName()
-            )));
-
-        } else {
             player.sendMessage(messages.get("TransferInsufficient"));
+
+            return true;
         }
+
+        // Checks passed ----------------------------------------------------------------
+
+        plugin.getEconomy().depositPlayer(target, amount);
+
+        plugin.getEconomy().withdrawPlayer(player, amount);
+
+        target.sendMessage(messages.get("TransferReceived", Map.of("player", player.getName(), "amount", String.valueOf(amount))));
+
+        player.sendMessage(messages.get("TransferSent", Map.of("amount", String.valueOf(amount), "player", target.getName())));
+
         return true;
     }
 }

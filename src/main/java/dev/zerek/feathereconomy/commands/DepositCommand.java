@@ -2,7 +2,6 @@ package dev.zerek.feathereconomy.commands;
 
 import dev.zerek.feathereconomy.FeatherEconomy;
 import dev.zerek.feathereconomy.config.FeatherEconomyMessages;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -31,7 +30,7 @@ public class DepositCommand implements CommandExecutor {
 
         int result = 0;
         
-        if(amount.equalsIgnoreCase("all")) {
+        if (amount.equalsIgnoreCase("all")) {
 
             for(ItemStack itemStack : player.getInventory().getContents()) {
 
@@ -76,16 +75,16 @@ public class DepositCommand implements CommandExecutor {
             // /deposit
             case 0:
 
-                if(sender.hasPermission("feather.economy.deposit.others")) sender.sendMessage(messages.get("DepositUsageOthers"));
+                if (sender.hasPermission("feather.economy.deposit.others")) sender.sendMessage(messages.get("DepositUsageOthers"));
 
-                else if(sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("DepositUsage"));
+                else if (sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("DepositUsage"));
 
                 return true;
 
             // /deposit [amount]
             case 1:
 
-                if(!(sender instanceof Player)) {
+                if (!(sender instanceof Player)) {
 
                     sender.sendMessage(messages.get("ErrorNotPlayer"));
 
@@ -94,7 +93,7 @@ public class DepositCommand implements CommandExecutor {
 
                 Player player = (Player) sender;
 
-                if(!player.hasPermission("feather.economy.deposit")) {
+                if (!player.hasPermission("feather.economy.deposit")) {
 
                     player.sendMessage(messages.get("ErrorNoPermission"));
                     
@@ -103,7 +102,7 @@ public class DepositCommand implements CommandExecutor {
                 
                 Integer amount = this.parseAmount(args[0], player);
                 
-                if(amount == null || amount < 1) {
+                if (amount == null || amount < 1) {
 
                     player.sendMessage(messages.get("ErrorNotNumber"));
                     
@@ -132,7 +131,7 @@ public class DepositCommand implements CommandExecutor {
             // /deposit [amount] [player]
             case 2:
 
-                if(!sender.hasPermission("feather.economy.deposit.others")) {
+                if (!sender.hasPermission("feather.economy.deposit.others")) {
 
                     sender.sendMessage(messages.get("ErrorNoPermission"));
 
@@ -141,7 +140,7 @@ public class DepositCommand implements CommandExecutor {
 
                 Integer amount2 = this.parseAmount(args[0]);
 
-                if(amount2 == null || amount2 < 1) {
+                if (amount2 == null || amount2 < 1) {
 
                     sender.sendMessage(messages.get("ErrorNotNumber"));
 
@@ -150,7 +149,7 @@ public class DepositCommand implements CommandExecutor {
 
                 OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
 
-                if(plugin.getEconomy().hasAccount(target)) {
+                if (plugin.getEconomy().hasAccount(target)) {
 
                     sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
 
@@ -176,9 +175,9 @@ public class DepositCommand implements CommandExecutor {
                 return true;
         }
 
-        if(sender.hasPermission("feather.economy.deposit.others")) sender.sendMessage(messages.get("DepositUsageOthers"));
+        if (sender.hasPermission("feather.economy.deposit.others")) sender.sendMessage(messages.get("DepositUsageOthers"));
 
-        else if(sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("DepositUsage"));
+        else if (sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("DepositUsage"));
 
         return true;
     }

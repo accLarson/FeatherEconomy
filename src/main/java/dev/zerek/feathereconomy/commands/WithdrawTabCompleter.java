@@ -21,7 +21,7 @@ public class WithdrawTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
 
-        if(args.length == 1) return new ArrayList<>();
+        if (args.length == 1) return new ArrayList<>();
 
         else return null;
     }

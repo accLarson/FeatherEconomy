@@ -84,7 +84,7 @@ public class EconomyServiceProvider implements Economy {
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        if(!this.hasAccount(player)){
+        if (!this.hasAccount(player)){
 //            this.createPlayerAccount(player);
             return 0;
         }
@@ -135,8 +135,8 @@ public class EconomyServiceProvider implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
         double balance = this.getBalance(player);
-        if(this.has(player, amount)) {
-            if(this.plugin.getStorage().withdraw(player.getUniqueId(), amount)) {
+        if (this.has(player, amount)) {
+            if (this.plugin.getStorage().withdraw(player.getUniqueId(), amount)) {
                 return new EconomyResponse(amount, balance - amount, EconomyResponse.ResponseType.SUCCESS, "");
             }
         }
@@ -164,12 +164,12 @@ public class EconomyServiceProvider implements Economy {
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
         double balance = 0;
-        if(!this.hasAccount(player)) {
+        if (!this.hasAccount(player)) {
             this.createPlayerAccount(player);
         } else {
             balance = this.getBalance(player);
         }
-        if(this.plugin.getStorage().deposit(player.getUniqueId(), amount)) {
+        if (this.plugin.getStorage().deposit(player.getUniqueId(), amount)) {
             return new EconomyResponse(amount, balance + amount, EconomyResponse.ResponseType.SUCCESS, "");
         } else {
             return new EconomyResponse(amount, balance, EconomyResponse.ResponseType.FAILURE, "");
@@ -268,7 +268,7 @@ public class EconomyServiceProvider implements Economy {
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer player) {
-        if(!this.hasAccount(player)) {
+        if (!this.hasAccount(player)) {
             return this.plugin.getStorage().createAccount(player.getUniqueId());
         }
         return false;

@@ -21,7 +21,7 @@ public class TransferTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
 
-        if(args.length == 2) return null;
+        if (args.length == 2) return null;
 
         else return new ArrayList<>();
     }

@@ -59,13 +59,13 @@ public final class FeatherEconomy extends JavaPlugin {
 
         RegisteredServiceProvider<Economy> provider = getServer().getServicesManager().getRegistration(Economy.class);
 
-        if(provider == null) this.getLogger().severe("Unable to hook into Vault.");
+        if (provider == null) this.getLogger().severe("Unable to hook into Vault.");
     }
 
     @Override
     public void onDisable() {
 
-        if(this.database != null) this.database.close();
+        if (this.database != null) this.database.close();
     }
 
     public DatabaseManager getDatabaseManager() {

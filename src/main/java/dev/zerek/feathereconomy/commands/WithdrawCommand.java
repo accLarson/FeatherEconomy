@@ -34,26 +34,26 @@ public class WithdrawCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(!(sender instanceof Player)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage(messages.get("ErrorNotPlayer"));
             return true;
         }
 
         Player player = (Player) sender;
 
-        if(args.length == 1) {
-            if(!player.hasPermission("feather.economy.withdraw")) {
+        if (args.length == 1) {
+            if (!player.hasPermission("feather.economy.withdraw")) {
                 player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }
 
             Integer amount = this.parseAmount(args[0]);
-            if(amount == null || amount < 1) {
+            if (amount == null || amount < 1) {
                 player.sendMessage(messages.get("ErrorNotNumber"));
                 return true;
             }
 
-            if(this.plugin.getEconomy().has(player, amount)) {
+            if (this.plugin.getEconomy().has(player, amount)) {
                 this.plugin.getEconomy().withdrawPlayer(player, amount);
                 HashMap<Integer, ItemStack> stack = player.getInventory().addItem(new ItemStack(Material.LAPIS_LAZULI, amount));
                 if (!stack.isEmpty()) {
@@ -75,26 +75,26 @@ public class WithdrawCommand implements CommandExecutor {
             return true;
         }
 
-        if(args.length == 2) {
-            if(!player.hasPermission("feather.economy.withdraw.others")) {
+        if (args.length == 2) {
+            if (!player.hasPermission("feather.economy.withdraw.others")) {
                 player.sendMessage(messages.get("ErrorNoPermission"));
                 return true;
             }
 
             Integer amount = this.parseAmount(args[0]);
-            if(amount == null || amount < 1) {
+            if (amount == null || amount < 1) {
                 player.sendMessage(messages.get("ErrorNotNumber"));
                 return true;
             }
 
             String name = args[1];
             Player target = Bukkit.getPlayer(name);
-            if(target == null) {
+            if (target == null) {
                 player.sendMessage(messages.get("ErrorUnresolvedPlayer"));
                 return true;
             }
 
-            if(this.plugin.getEconomy().has(target, amount)) {
+            if (this.plugin.getEconomy().has(target, amount)) {
 
                 this.plugin.getEconomy().withdrawPlayer(target, amount);
 

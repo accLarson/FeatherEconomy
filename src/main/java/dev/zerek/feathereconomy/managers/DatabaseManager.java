@@ -20,13 +20,13 @@ public class DatabaseManager {
         this.config = plugin.getFeatherEconomyConfig();
         this.isMySQLEnabled = this.config.isMysqlEnabled();
         this.initConnection();
-        if(connection != null) {
+        if (connection != null) {
             this.initTables();
         }
     }
 
     private void initConnection() {
-        if(this.isMySQLEnabled) {
+        if (this.isMySQLEnabled) {
             this.initMySQLConnection();
         } else {
             this.initSQLiteConnection();
@@ -73,8 +73,8 @@ public class DatabaseManager {
 
     public void close() {
         try {
-            if(DatabaseManager.connection != null) {
-                if(!DatabaseManager.connection.isClosed()){
+            if (DatabaseManager.connection != null) {
+                if (!DatabaseManager.connection.isClosed()){
                     DatabaseManager.connection.close();
                 }
             }
@@ -85,7 +85,7 @@ public class DatabaseManager {
 
     private boolean existsTable(String table) {
         try {
-            if(!connection.isClosed()) {
+            if (!connection.isClosed()) {
                 ResultSet rs = connection.getMetaData().getTables(null, null, table, null);
                 return rs.next();
             } else {
@@ -98,7 +98,7 @@ public class DatabaseManager {
     }
 
     private void initTables() {
-        if(!this.existsTable("economy_accounts")) {
+        if (!this.existsTable("economy_accounts")) {
             plugin.getLogger().info("Creating economy_accounts table.");
             String query = "CREATE TABLE IF NOT EXISTS `economy_accounts` ("
                     + " `mojang_uuid` VARCHAR(255) PRIMARY KEY, "
@@ -109,7 +109,7 @@ public class DatabaseManager {
                     + " `last_withdraw_value` double(64,2) NOT NULL DEFAULT 0, "
                     + " `last_withdraw_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);";
             try {
-                if(!connection.isClosed()) {
+                if (!connection.isClosed()) {
                     connection.createStatement().execute(query);
                 }
             } catch (SQLException e) {
@@ -120,7 +120,7 @@ public class DatabaseManager {
     }
 
     public boolean executeUpdate(String update) {
-        if(DatabaseManager.connection == null) {
+        if (DatabaseManager.connection == null) {
             return false;
         }
         Statement statement;
@@ -136,7 +136,7 @@ public class DatabaseManager {
     }
 
     public ResultSet executeQuery(String query) {
-        if(DatabaseManager.connection == null) {
+        if (DatabaseManager.connection == null) {
             return null;
         }
         try {

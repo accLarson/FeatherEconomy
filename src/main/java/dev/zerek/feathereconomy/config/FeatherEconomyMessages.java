@@ -42,7 +42,7 @@ public class FeatherEconomyMessages {
 
     private void init() {
         File file = new File(this.plugin.getDataFolder(), "messages.yml");
-        if(!file.exists()) {
+        if (!file.exists()) {
             this.plugin.saveResource("messages.yml", false);
         }
 
@@ -59,7 +59,7 @@ public class FeatherEconomyMessages {
     }
 
     public TextComponent get(String key){
-        if(messages.containsKey(key)) {
+        if (messages.containsKey(key)) {
             MiniMessage parser = MiniMessage.builder().tags(
                     TagResolver.builder()
                             .resolver(StandardTags.color())
@@ -71,7 +71,7 @@ public class FeatherEconomyMessages {
     }
 
     public TextComponent get(String key, Map<String, String> placeholders) {
-        if(messages.containsKey(key)) {
+        if (messages.containsKey(key)) {
 
             MiniMessage parser = MiniMessage.builder().tags(
                     TagResolver.builder()

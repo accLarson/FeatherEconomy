@@ -23,7 +23,7 @@ public class StorageManager {
     private void init() {
         String query = "SELECT * FROM economy_accounts;";
         try(ResultSet results = database.executeQuery(query)){
-            if(results != null) {
+            if (results != null) {
                 while (results.next()) {
                     accounts.add(UUID.fromString(results.getString("mojang_uuid")));
                 }
@@ -36,11 +36,11 @@ public class StorageManager {
 
     public boolean hasAccount(UUID uuid) {
         String query = "SELECT * FROM economy_accounts WHERE mojang_uuid = '" + uuid.toString() + "' LIMIT 1;";
-        if(accounts.contains(uuid)) {
+        if (accounts.contains(uuid)) {
             return true;
         } else {
             try(ResultSet results = database.executeQuery(query)){
-                if(results != null && results.next()) {
+                if (results != null && results.next()) {
                     accounts.add(UUID.fromString(results.getString("mojang_uuid")));
                     return true;
                 }
@@ -54,7 +54,7 @@ public class StorageManager {
     public double getBalance(UUID uuid) {
         String query = "SELECT balance FROM economy_accounts WHERE mojang_uuid = '" + uuid.toString() + "' LIMIT 1;";
         try(ResultSet results = database.executeQuery(query)){
-            if(results != null && results.next()){
+            if (results != null && results.next()){
                 return results.getDouble("balance");
             }
         } catch (SQLException e) {
@@ -65,7 +65,7 @@ public class StorageManager {
 
     public boolean createAccount(UUID uuid) {
         boolean update = database.executeUpdate("INSERT INTO economy_accounts (mojang_uuid) VALUES ('" + uuid.toString() + "');");
-        if(update) {
+        if (update) {
             accounts.add(uuid);
         }
         return update;
