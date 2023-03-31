@@ -49,7 +49,7 @@ public final class FeatherEconomy extends JavaPlugin {
 
         this.getCommand("transfer").setExecutor(new TransferCommand(this));
 
-        this.getCommand("transfer").setTabCompleter(new TransferTabCompleter(this));
+        this.getCommand("transfer").setTabCompleter(new TransferTabCompleter());
 
         this.getCommand("withdraw").setExecutor(new WithdrawCommand(this));
 
