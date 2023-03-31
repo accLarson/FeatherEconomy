@@ -142,7 +142,7 @@ public class DepositCommand implements CommandExecutor {
 
                 OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
 
-                if (plugin.getEconomy().hasAccount(target)) {
+                if (!plugin.getEconomy().hasAccount(target)) {
 
                     sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
 
