@@ -82,6 +82,8 @@ public class BalanceCommand implements CommandExecutor {
 
         else if (sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("BalanceUsage"));
 
+        else sender.sendMessage(messages.get("ErrorNoPermission"));
+
         return true;
     }
 }

@@ -79,6 +79,8 @@ public class DepositCommand implements CommandExecutor {
 
                 else if (sender.hasPermission("feather.economy.deposit")) sender.sendMessage(messages.get("DepositUsage"));
 
+                else sender.sendMessage(messages.get("ErrorNoPermission"));
+
                 return true;
 
             // /deposit [amount]
@@ -178,6 +180,8 @@ public class DepositCommand implements CommandExecutor {
         if (sender.hasPermission("feather.economy.deposit.others")) sender.sendMessage(messages.get("DepositUsageOthers"));
 
         else if (sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("DepositUsage"));
+
+        else sender.sendMessage(messages.get("ErrorNoPermission"));
 
         return true;
     }
