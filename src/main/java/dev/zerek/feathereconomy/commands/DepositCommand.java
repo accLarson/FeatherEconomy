@@ -77,7 +77,7 @@ public class DepositCommand implements CommandExecutor {
 
                 if (sender.hasPermission("feather.economy.deposit.others")) sender.sendMessage(messages.get("DepositUsageOthers"));
 
-                else if (sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("DepositUsage"));
+                else if (sender.hasPermission("feather.economy.deposit")) sender.sendMessage(messages.get("DepositUsage"));
 
                 return true;
 
@@ -138,20 +138,20 @@ public class DepositCommand implements CommandExecutor {
                     return true;
                 }
 
-                Integer amount2 = this.parseAmount(args[0]);
-
-                if (amount2 == null || amount2 < 1) {
-
-                    sender.sendMessage(messages.get("ErrorNotNumber"));
-
-                    return true;
-                }
-
                 OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
 
                 if (plugin.getEconomy().hasAccount(target)) {
 
                     sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
+
+                    return true;
+                }
+
+                Integer amount2 = this.parseAmount(args[0]);
+
+                if (amount2 == null || amount2 < 1) {
+
+                    sender.sendMessage(messages.get("ErrorNotNumber"));
 
                     return true;
                 }
