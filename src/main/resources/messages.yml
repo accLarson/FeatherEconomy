@@ -22,7 +22,8 @@ WithdrawInsufficient: "<#6C719D>You do not have sufficient Lapis in your account
 
 #Staff permission messages:
 
-ManageBalanceView: "<#6C719D><player>'s current balance is: <#949bd1><balance> Lapis<#6C719D>."
+ManageBalanceUsage: "/managebalance [player] [balance/remove/add/set/empty] <amount>"
+ManageBalanceBalance: "<#6C719D><player>'s current balance is: <#949bd1><balance> Lapis<#6C719D>."
 
 ManageBalanceRemove: "<#6C719D>You removed <#949bd1><amount> Lapis<#6C719D> from <#949bd1><player>'s<#6C719D> account."
 ManageBalanceRemoveUsage: "/managebalance [player] remove [amount]"

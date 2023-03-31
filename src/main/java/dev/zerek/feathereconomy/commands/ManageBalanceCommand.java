@@ -24,33 +24,44 @@ public class ManageBalanceCommand implements CommandExecutor {
         this.messages = plugin.getFeatherEconomyMessages();
     }
 
+    private Integer parseAmount(String amount) {
+
+        try {
+
+            return Integer.parseInt(amount);
+        }
+
+        catch (NumberFormatException e) {
+
+            return null;
+        }
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+
+        if (!sender.hasPermission("feather.economy.managebalance")) {
+
+            sender.sendMessage(messages.get("ErrorNoPermission"));
+
+            return true;
+        }
 
         switch (args.length) {
 
             // /managebalance
             case 0:
 
-                if (sender.hasPermission("feather.economy.managebalance")) sender.sendMessage(messages.get("ManageBalanceUsage"));
-
-                else sender.sendMessage(messages.get("ErrorNoPermission"));
+                sender.sendMessage(messages.get("ManageBalanceUsage"));
 
                 return true;
 
-            // /managebalance [player] - checking a players balance
+            // /managebalance [player]
             case 1:
-
-                if (!sender.hasPermission("feather.economy.managebalance")) {
-
-                    sender.sendMessage(messages.get("ErrorNoPermission"));
-
-                    return true;
-                }
 
                 OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
 
-                if (plugin.getEconomy().hasAccount(target)) {
+                if (!plugin.getEconomy().hasAccount(target)) {
 
                     sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
 
@@ -59,16 +70,18 @@ public class ManageBalanceCommand implements CommandExecutor {
 
                 // Checks passed ----------------------------------------------------------------
 
-                sender.sendMessage(messages.get("ManageBalanceView", Map.of("player", target.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target)))));
+                sender.sendMessage(messages.get("ManageBalanceBalance", Map.of("player", target.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target)))));
 
                 return true;
 
             // /managebalance [player] [balance/remove/add/set/empty]
             case 2:
 
-                if (!sender.hasPermission("feather.economy.managebalance")) {
+                OfflinePlayer target2 = plugin.getServer().getOfflinePlayer(args[0]);
 
-                    sender.sendMessage(messages.get("ErrorNoPermission"));
+                if (!plugin.getEconomy().hasAccount(target2)) {
+
+                    sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
 
                     return true;
                 }
@@ -76,18 +89,9 @@ public class ManageBalanceCommand implements CommandExecutor {
                 // /managebalance [player] balance
                 if (args[1].equalsIgnoreCase("balance")) {
 
-                    OfflinePlayer target2 = plugin.getServer().getOfflinePlayer(args[0]);
-
-                    if (plugin.getEconomy().hasAccount(target2)) {
-
-                        sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
-
-                        return true;
-                    }
-
                     // Checks passed ----------------------------------------------------------------
 
-                    sender.sendMessage(messages.get("ManageBalanceView", Map.of("player", target2.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target2)))));
+                    sender.sendMessage(messages.get("ManageBalanceBalance", Map.of("player", target2.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target2)))));
 
                     return true;
                 }
@@ -95,9 +99,7 @@ public class ManageBalanceCommand implements CommandExecutor {
                 // /managebalance [player] remove
                 else if (args[1].equalsIgnoreCase("remove")) {
 
-                    if (sender.hasPermission("feather.economy.managebalance")) sender.sendMessage(messages.get("ManageBalanceRemoveUsage"));
-
-                    else sender.sendMessage(messages.get("ErrorNoPermission"));
+                    sender.sendMessage(messages.get("ManageBalanceRemoveUsage"));
 
                     return true;
                 }
@@ -105,9 +107,7 @@ public class ManageBalanceCommand implements CommandExecutor {
                 // /managebalance [player] add
                 else if (args[1].equalsIgnoreCase("add")) {
 
-                    if (sender.hasPermission("feather.economy.managebalance")) sender.sendMessage(messages.get("ManageBalanceAddUsage"));
-
-                    else sender.sendMessage(messages.get("ErrorNoPermission"));
+                    sender.sendMessage(messages.get("ManageBalanceAddUsage"));
 
                     return true;
                 }
@@ -115,24 +115,13 @@ public class ManageBalanceCommand implements CommandExecutor {
                 // /managebalance [player] set
                 else if (args[1].equalsIgnoreCase("set")) {
 
-                    if (sender.hasPermission("feather.economy.managebalance")) sender.sendMessage(messages.get("ManageBalanceSetUsage"));
-
-                    else sender.sendMessage(messages.get("ErrorNoPermission"));
+                    sender.sendMessage(messages.get("ManageBalanceSetUsage"));
 
                     return true;
                 }
 
                 // /managebalance [player] empty
                 else if (args[1].equalsIgnoreCase("empty")) {
-
-                    OfflinePlayer target2 = plugin.getServer().getOfflinePlayer(args[0]);
-
-                    if (plugin.getEconomy().hasAccount(target2)) {
-
-                        sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
-
-                        return true;
-                    }
 
                     // Checks passed ----------------------------------------------------------------
 
@@ -145,12 +134,94 @@ public class ManageBalanceCommand implements CommandExecutor {
                     return true;
                 }
 
-                else {
+            // /managebalance [player] [remove/add/set] [amount]
+            case 3:
 
+                OfflinePlayer target3 = plugin.getServer().getOfflinePlayer(args[0]);
+
+                if (!plugin.getEconomy().hasAccount(target3)) {
+
+                    sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
+
+                    return true;
                 }
 
-        }
+                Integer amount = this.parseAmount(args[2]);
 
-        return true;
+                if (amount == null || amount < 1) {
+
+                    sender.sendMessage(messages.get("ErrorNotNumber"));
+
+                    return true;
+                }
+
+                // /managebalance [player] remove [amount]
+                if (args[1].equalsIgnoreCase("remove")) {
+
+                    if (!plugin.getEconomy().has(target3, amount)) {
+
+                        sender.sendMessage(messages.get("ManageBalanceRemoveInsufficient", Map.of("player", target3.getName())));
+
+                        sender.sendMessage(messages.get("ManageBalanceBalance", Map.of("player", target3.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target3)))));
+
+
+                        return true;
+                    }
+
+                    plugin.getEconomy().withdrawPlayer(target3,amount);
+
+                    if (target3.isOnline()) {
+
+                        ((Player)target3).sendMessage(messages.get("ManageBalanceRemoveInform", Map.of("amount",String.valueOf(amount))));
+
+                        ((Player)target3).sendMessage(messages.get("Balance", Map.of("balance",String.valueOf((int) plugin.getEconomy().getBalance(target3)))));
+                    }
+
+                    sender.sendMessage(messages.get("ManageBalanceRemove", Map.of("amount",String.valueOf(amount),"player",target3.getName())));
+
+                    sender.sendMessage(messages.get("ManageBalanceBalance", Map.of("player", target3.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target3)))));
+
+                    return true;
+                }
+
+                // /managebalance [player] add [amount]
+                else if (args[1].equalsIgnoreCase("add")) {
+
+                    plugin.getEconomy().depositPlayer(target3,amount);
+
+                    if (target3.isOnline()) {
+
+                        ((Player)target3).sendMessage(messages.get("ManageBalanceAddInform", Map.of("amount",String.valueOf(amount))));
+
+                        ((Player)target3).sendMessage(messages.get("Balance", Map.of("balance",String.valueOf((int) plugin.getEconomy().getBalance(target3)))));
+                    }
+
+                    sender.sendMessage(messages.get("ManageBalanceAdd", Map.of("amount",String.valueOf(amount),"player",target3.getName())));
+
+                    sender.sendMessage(messages.get("ManageBalanceBalance", Map.of("player", target3.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target3)))));
+
+                    return true;
+                }
+
+                // /managebalance [player] set [amount]
+                else if (args[1].equalsIgnoreCase("set")) {
+
+                    plugin.getEconomy().withdrawPlayer(target3,plugin.getEconomy().getBalance(target3));
+
+                    plugin.getEconomy().depositPlayer(target3,amount);
+
+                    if (target3.isOnline()) ((Player)target3).sendMessage(messages.get("ManageBalanceSetInform", Map.of("amount",String.valueOf(amount))));
+
+                    sender.sendMessage(messages.get("ManageBalanceSet", Map.of("amount",String.valueOf(amount),"player",target3.getName())));
+
+                    return true;
+                }
+
+            default:
+
+                sender.sendMessage(messages.get("ManageBalanceUsage"));
+
+                return true;
+        }
     }
 }
