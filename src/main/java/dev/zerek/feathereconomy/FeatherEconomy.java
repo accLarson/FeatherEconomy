@@ -55,6 +55,10 @@ public final class FeatherEconomy extends JavaPlugin {
 
         this.getCommand("withdraw").setTabCompleter(new WithdrawTabCompleter(this));
 
+        this.getCommand("managebalance").setExecutor(new ManageBalanceCommand(this));
+
+        this.getCommand("managebalance").setTabCompleter(new ManageBalanceTabCompleter());
+
         this.getServer().getServicesManager().register(Economy.class, this.economy, this, ServicePriority.Normal);
 
         RegisteredServiceProvider<Economy> provider = getServer().getServicesManager().getRegistration(Economy.class);

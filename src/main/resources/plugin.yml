@@ -8,14 +8,12 @@ depend:
   - Vault
 commands:
   balance:
-    description: View your balance
-    usage: /<command>
+    description: View your balance.
   deposit:
-    description: Deposit lapis into your account
-    usage: /<command> [amount]
+    description: Deposit lapis into your account.
   transfer:
-    description: Transfer lapis from your account to another account
-    usage: /<command> [player] [amount]
+    description: Transfer lapis from your account to another account.
   withdraw:
-    description: Withdraw lapis from your account
-    usage: /<command> [amount]
+    description: Withdraw lapis from your account.
+  managebalance:
+    description: Modify another player's balance.
