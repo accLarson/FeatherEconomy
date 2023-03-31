@@ -45,7 +45,7 @@ public final class FeatherEconomy extends JavaPlugin {
 
         this.getCommand("deposit").setExecutor(new DepositCommand(this));
 
-        this.getCommand("deposit").setTabCompleter(new DepositTabCompleter(this));
+        this.getCommand("deposit").setTabCompleter(new DepositTabCompleter());
 
         this.getCommand("transfer").setExecutor(new TransferCommand(this));
 

@@ -24,33 +24,14 @@ public class WithdrawTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
 
-        // /withdraw [amount]
-        if (args.length == 1) {
+        if (!sender.hasPermission("feather.economy.withdraw")) return new ArrayList<>();
 
-            // Check if sender has permission
-            if (!sender.hasPermission("feather.economy.withdraw")) return new ArrayList<>();
+        if (args.length != 1) return new ArrayList<>();
 
-            ArrayList<String> suggestions = new ArrayList<>();
+        ArrayList<String> suggestions = new ArrayList<>();
 
-            if (sender instanceof Player) {
+        if (sender instanceof Player) suggestions.add(String.valueOf(plugin.getEconomy().getBalance(((Player) sender))));
 
-                Player player = (Player) sender;
-
-                suggestions.add(String.valueOf(plugin.getEconomy().getBalance(player)));
-            }
-
-            return suggestions;
-        }
-
-        // /withdraw [amount] [player]
-        else if (args.length == 2){
-
-            // Check if sender has permission
-            if (!sender.hasPermission("feather.economy.withdraw.other")) return new ArrayList<>();
-
-            return null;
-        }
-
-        return new ArrayList<>();
+        return suggestions;
     }
 }

@@ -27,62 +27,30 @@ public class BalanceCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        switch (args.length) {
+        if (!sender.hasPermission("feather.economy.balance")) {
 
-            // /balance
-            case 0:
+            sender.sendMessage(messages.get("ErrorNoPermission"));
 
-                if (!(sender instanceof Player)) {
-
-                    sender.sendMessage(messages.get("ErrorNotPlayer"));
-
-                    return true;
-                }
-
-                if (!sender.hasPermission("feather.economy.balance")) {
-
-                    sender.sendMessage(messages.get("ErrorNoPermission"));
-
-                    return true;
-                }
-
-                // Checks passed ----------------------------------------------------------------
-
-                sender.sendMessage(messages.get("Balance", Map.of("balance",String.valueOf((int) plugin.getEconomy().getBalance((OfflinePlayer) sender)))));
-
-                return true;
-
-            // /balance [player]
-            case 1:
-
-                if (!sender.hasPermission("feather.economy.balance.others")) {
-
-                    sender.sendMessage(messages.get("ErrorNoPermission"));
-
-                    return true;
-                }
-
-                OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
-
-                if (!plugin.getEconomy().hasAccount(target)) {
-
-                    sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
-
-                    return true;
-                }
-
-                // Checks passed ----------------------------------------------------------------
-
-                sender.sendMessage(messages.get("BalanceOther", Map.of("player", target.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target)))));
-
-                return true;
+            return true;
         }
 
-        if (sender.hasPermission("feather.economy.balance.others")) sender.sendMessage(messages.get("BalanceUsageOthers"));
+        if (!(sender instanceof Player)) {
 
-        else if (sender.hasPermission("feather.economy.balance")) sender.sendMessage(messages.get("BalanceUsage"));
+            sender.sendMessage(messages.get("ErrorNotPlayer"));
 
-        else sender.sendMessage(messages.get("ErrorNoPermission"));
+            return true;
+        }
+
+        if (args.length != 0) {
+
+            sender.sendMessage(messages.get("BalanceUsage"));
+
+            return true;
+        }
+
+        // Checks passed ----------------------------------------------------------------
+
+        sender.sendMessage(messages.get("Balance", Map.of("balance", String.valueOf((int) plugin.getEconomy().getBalance((OfflinePlayer) sender)))));
 
         return true;
     }
