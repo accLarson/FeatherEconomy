@@ -14,6 +14,8 @@ public class BalanceTabCompleter implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        return new ArrayList<>();
+        if (sender.hasPermission("feather.economy.managebalance")) return null;
+
+        else return new ArrayList<>();
     }
 }

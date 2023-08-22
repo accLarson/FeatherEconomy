@@ -12,15 +12,13 @@ This plugin depends on [Vault](https://github.com/milkbowl/Vault)
 
 
 ### Permission Nodes:
-    Suggested player permission nodes:
+    Player permission nodes:
 
     feather.economy.deposit          -  /deposit [amount]            -  Move lapis: inv -> account.
     feather.economy.balance          -  /balance                     -  Check account balance.
     feather.economy.withdraw         -  /withdraw [amount]           -  Move lapis: account -> inv.
     feather.economy.transfer         -  /transfer [amount] [player]  -  Send lapis to another player.
     
-    Suggested administrator permission nodes:
+    Administrator permission nodes:
 
-    feather.economy.deposit.others   -  /deposit [amount] [player]   -  Deposit lapis to a player.
-    feather.economy.balance.others   -  /balance [player]            -  Check a players balance.
-    feather.economy.withdraw.others  -  /withdraw [amount] [player]  -  Withdraw lapis from a player.
+    feather.economy.managebalance    -  view/add/remove/set another player's balance

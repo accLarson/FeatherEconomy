@@ -27,6 +27,25 @@ public class BalanceCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
+
+        if (args.length == 1) {
+
+            if (!sender.hasPermission("feather.economy.managebalance")) {
+                sender.sendMessage(messages.get("ErrorNoPermission"));
+                return true;
+            }
+
+            OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
+
+            if (!plugin.getEconomy().hasAccount(target)) {
+                sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
+                return true;
+            }
+
+            sender.sendMessage(messages.get("BalanceOther", Map.of("player", target.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target)))));
+            return true;
+        }
+
         if (!sender.hasPermission("feather.economy.balance")) {
 
             sender.sendMessage(messages.get("ErrorNoPermission"));
