@@ -92,6 +92,8 @@ public class WithdrawCommand implements CommandExecutor {
 
         this.plugin.getEconomy().withdrawPlayer(player, amount);
 
+        player.getInventory().setMaxStackSize(64);
+
         HashMap<Integer, ItemStack> remainingItemStackMap = player.getInventory().addItem(new ItemStack(Material.LAPIS_LAZULI, amount));
 
         if (!remainingItemStackMap.isEmpty()) {
