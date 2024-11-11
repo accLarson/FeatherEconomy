@@ -20,7 +20,7 @@ WithdrawUsage: "/withdraw [amount]"
 WithdrawIncomplete: "<#6C719D>Unable to withdraw full amount, withdrew: <withdrew>. Requested: <total>."
 WithdrawInsufficient: "<#6C719D>You do not have sufficient Lapis in your account to complete this withdraw."
 
-#Staff permission messages:
+# Staff permission messages:
 
 BalanceOtherUsage: "/managebalance [player] [balance/remove/add/set/empty] <amount>"
 BalanceOther: "<#6C719D><player>'s current balance is: <#949bd1><balance> Lapis<#6C719D>."
@@ -42,5 +42,7 @@ ManageBalanceEmpty: "<#6C719D>You emptied <#949bd1><player>'s<#6C719D> account b
 ManageBalanceEmptyUsage: "/managebalance [player] empty"
 ManageBalanceEmptyInform: "<#6C719D>Your account balance has been emptied."
 
+# Economy Report Labels
+EconomyReportPreLine: "<white>•<#777777>--- <white>FeatherEconomy <#777777>----------------------------------<white>•"
+EconomyReportLine: "<white>•<#777777>----------------------------------------------------<white>•"
 
-  #[balance/remove/add/set/empty]

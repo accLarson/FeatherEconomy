@@ -6,3 +6,5 @@ settings:
     username: ''
     password: ''
     database: 'economy'
+  report:
+    inactive-threshold-days: 64

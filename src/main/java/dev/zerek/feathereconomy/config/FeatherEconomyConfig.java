@@ -9,6 +9,7 @@ public class FeatherEconomyConfig {
     private final FileConfiguration config;
 
     private String mysqlUsername;
+    private int inactiveThresholdDays;
     private String mysqlHost;
     private int mysqlPort;
     private String mysqlPassword;
@@ -29,6 +30,7 @@ public class FeatherEconomyConfig {
         this.mysqlPort = config.getInt("settings.mysql.port");
         this.mysqlPassword = config.getString("settings.mysql.password");
         this.mysqlDatabase = config.getString("settings.mysql.database");
+        this.inactiveThresholdDays = config.getInt("settings.report.inactive-threshold-days", 30);
     }
 
     public String getMysqlUsername() {
@@ -53,5 +55,9 @@ public class FeatherEconomyConfig {
 
     public boolean isMysqlEnabled() {
         return mysqlEnabled;
+    }
+
+    public int getInactiveThresholdDays() {
+        return inactiveThresholdDays;
     }
 }

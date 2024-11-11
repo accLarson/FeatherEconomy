@@ -1,7 +1,7 @@
 name: FeatherEconomy
 version: ${project.version}
 main: dev.zerek.feathereconomy.FeatherEconomy
-api-version: 1.19
+api-version: 1.21
 authors: [ Wasted_Ticks, Zerek ]
 loadbefore: [Vault]
 depend:
@@ -17,3 +17,5 @@ commands:
     description: Withdraw lapis from your account.
   managebalance:
     description: Modify another player's balance.
+  economyreport:
+    description: Prints data/stats about the server economy.
