@@ -34,7 +34,7 @@ public class EconomyReportCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!sender.hasPermission("feathereconomy.report")) {
+        if (!sender.hasPermission("feather.economy.economyreport")) {
             sender.sendMessage(messages.get("ErrorNoPermission"));
             return true;
         }
@@ -83,13 +83,12 @@ public class EconomyReportCommand implements CommandExecutor {
                     default -> "th";
                 };
 
-                // Create components with exact spacing totaling 316
                 Component nameLabel = chatUtil.addSpacing(
-                    Component.text(player.getName(), HIGHLIGHT_COLOR), 80);
+                    Component.text(player.getName(), HIGHLIGHT_COLOR), 90);
 
                 Component balanceLabel = chatUtil.addSpacing(
                     Component.text("Balance: ", SECONDARY_COLOR)
-                        .append(Component.text(String.format("%,d L", balance), PRIMARY_COLOR)), 106);
+                        .append(Component.text(String.format("%,d L", balance), PRIMARY_COLOR)), 96);
                 Component rankLabel = chatUtil.addSpacing(
                     Component.text("Wealth Rank: ", SECONDARY_COLOR)
                         .append(Component.text(rank + suffix, HIGHLIGHT_COLOR)), 130, true);
