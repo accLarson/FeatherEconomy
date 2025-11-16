@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BalanceTabCompleter implements TabCompleter {
-
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 

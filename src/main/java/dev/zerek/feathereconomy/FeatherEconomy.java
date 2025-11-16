@@ -12,8 +12,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
-
 public final class FeatherEconomy extends JavaPlugin {
 
     private DatabaseManager database;
@@ -44,8 +42,6 @@ public final class FeatherEconomy extends JavaPlugin {
         this.getCommand("withdraw").setTabCompleter(new WithdrawTabCompleter(this));
         this.getCommand("managebalance").setExecutor(new ManageBalanceCommand(this));
         this.getCommand("managebalance").setTabCompleter(new ManageBalanceTabCompleter());
-        this.getCommand("economyreport").setExecutor(new EconomyReportCommand(this));
-        this.getCommand("economyreport").setTabCompleter(new EconomyReportTabCompleter());
 
         this.getServer().getServicesManager().register(Economy.class, this.economy, this, ServicePriority.Normal);
 
