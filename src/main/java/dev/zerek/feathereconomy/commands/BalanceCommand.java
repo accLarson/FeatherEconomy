@@ -39,7 +39,7 @@ public class BalanceCommand implements CommandExecutor {
         }
 
         // Determine which player to show stats for
-        Player targetPlayer = null;
+        OfflinePlayer targetPlayer = null;
         
         if (args.length == 1) {
             if (!sender.hasPermission("feather.economy.managebalance")) {
@@ -54,15 +54,13 @@ public class BalanceCommand implements CommandExecutor {
                 return true;
             }
             
-            if (target.isOnline()) {
-                targetPlayer = (Player) target;
-            }
+            targetPlayer = target;
         } else if (sender instanceof Player) {
             targetPlayer = (Player) sender;
         }
 
         // Run the report generation asynchronously
-        Player finalTargetPlayer = targetPlayer;
+        OfflinePlayer finalTargetPlayer = targetPlayer;
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             int totalAccounts = storage.getTotalAccounts();
             int activeAccounts = storage.getActiveAccounts();
@@ -124,68 +122,37 @@ public class BalanceCommand implements CommandExecutor {
     }
 
     private void displayBasicStats(CommandSender sender, int totalLapis, int activeLapis, int activeHour, int activeDay, int active7Day, int active64Day, double avgBalance, double activeAvgBalance) {
-        // First row: Total Lapis and Active 1h
-        Component totalLabel = chatUtil.addSpacing(
-            Component.text("Total Lapis:", TITLE_COLOR)
-                .hoverEvent(Component.text("Total lapis in all accounts.", SECONDARY_COLOR)), 80);
-        Component totalValue = chatUtil.addSpacing(Component.text(String.format("%,d L", totalLapis), PRIMARY_COLOR), 56, true);
 
-        Component activeHourLabel = chatUtil.addSpacing(
-            Component.text("Active In Last 1h:", TITLE_COLOR)
-                .hoverEvent(Component.text("Accounts with transactions in the last hour", SECONDARY_COLOR)), 104);
-        Component activeHourValue = chatUtil.addSpacing(Component.text(String.format("%,d", activeHour), PRIMARY_COLOR), 40, true);
-
-        sender.sendMessage(Component.empty()
-            .append(totalLabel).append(totalValue)
-            .append(chatUtil.addSpacing(Component.empty(), 36))
-            .append(activeHourLabel).append(activeHourValue));
-
-        // Second row: Active Lapis and Active 1d
+        // First row: Active Lapis and Active 1d
         Component activeTotalLabel = chatUtil.addSpacing(
-            Component.text("Active Lapis:", TITLE_COLOR)
-                .hoverEvent(Component.text("Total lapis in active accounts. \n(Accounts with transaction within 64 days)", SECONDARY_COLOR)), 80);
-        Component activeTotalValue = chatUtil.addSpacing(Component.text(String.format("%,d L", activeLapis), PRIMARY_COLOR), 56, true);
+            Component.text("Total Lapis:", TITLE_COLOR)
+                .hoverEvent(Component.text("Total lapis in active accounts. \n(Accounts with transaction within 64 days)", SECONDARY_COLOR)), 70);
+        Component activeTotalValue = chatUtil.addSpacing(Component.text(String.format("%,d L", activeLapis), PRIMARY_COLOR), 75, true);
 
         Component activeDayLabel = chatUtil.addSpacing(
-            Component.text("Active In Last 1d:", TITLE_COLOR)
-                .hoverEvent(Component.text("Accounts with transactions in the last 24 hours", SECONDARY_COLOR)), 104);
-        Component activeDayValue = chatUtil.addSpacing(Component.text(String.format("%,d", activeDay), PRIMARY_COLOR), 40, true);
+            Component.text("Active 1d:", TITLE_COLOR)
+                .hoverEvent(Component.text("Accounts with transactions in the last 24 hours", SECONDARY_COLOR)), 70);
+        Component activeDayValue = chatUtil.addSpacing(Component.text(String.format("%,d", activeDay), PRIMARY_COLOR), 30, true);
 
         sender.sendMessage(Component.empty()
             .append(activeTotalLabel).append(activeTotalValue)
-            .append(chatUtil.addSpacing(Component.empty(), 36))
+            .append(chatUtil.addSpacing(Component.empty(), 71))
             .append(activeDayLabel).append(activeDayValue));
 
-        // Third row: Average Balance and Active 7d
-        Component avgLabel = chatUtil.addSpacing(
-            Component.text("Avg Balance:", TITLE_COLOR)
-                .hoverEvent(Component.text("Average lapis balance of all accounts.", SECONDARY_COLOR)), 80);
-        Component avgValue = chatUtil.addSpacing(Component.text(String.format("%,d L", (int)avgBalance), PRIMARY_COLOR), 56, true);
-
-        Component active7DayLabel = chatUtil.addSpacing(
-                Component.text("Active In Last 7d:", TITLE_COLOR)
-                        .hoverEvent(Component.text("Accounts with transactions in the last 7 days", SECONDARY_COLOR)), 104);
-        Component active7DayValue = chatUtil.addSpacing(Component.text(String.format("%,d", active7Day), PRIMARY_COLOR), 40, true);
-
-        sender.sendMessage(Component.empty()
-                .append(avgLabel).append(avgValue)
-                .append(chatUtil.addSpacing(Component.empty(), 36))
-                .append(active7DayLabel).append(active7DayValue));
-
-        // Fourth row: Active Average Balance and Active 64d
+        // Second row: Active Average Balance and Active 64d
         Component activeAvgLabel = chatUtil.addSpacing(
-            Component.text("Avg Active:", TITLE_COLOR)
-                .hoverEvent(Component.text("Average lapis balance of active accounts. \n(Accounts with transaction within 64 days)", SECONDARY_COLOR)), 80);
-        Component activeAvgValue = chatUtil.addSpacing(Component.text(String.format("%,d L", (int)activeAvgBalance), PRIMARY_COLOR), 56, true);
+            Component.text("Avg Lapis:", TITLE_COLOR)
+                .hoverEvent(Component.text("Average lapis balance of active accounts. \n(Accounts with transaction within 64 days)", SECONDARY_COLOR)), 70);
+        Component activeAvgValue = chatUtil.addSpacing(Component.text(String.format("%,d L", (int)activeAvgBalance), PRIMARY_COLOR), 75, true);
 
         Component active64DayLabel = chatUtil.addSpacing(
-                Component.text("Active In Last 64d:", TITLE_COLOR)
-                        .hoverEvent(Component.text("Accounts with transactions in the last 64 days", SECONDARY_COLOR)), 104);
-        Component active64DayValue = chatUtil.addSpacing(Component.text(String.format("%,d", active64Day), PRIMARY_COLOR), 40, true);
+                Component.text("Active 64d:", TITLE_COLOR)
+                        .hoverEvent(Component.text("Accounts with transactions in the last 64 days", SECONDARY_COLOR)), 70);
+        Component active64DayValue = chatUtil.addSpacing(Component.text(String.format("%,d", active64Day), PRIMARY_COLOR), 30, true);
 
         sender.sendMessage(Component.empty()
                 .append(activeAvgLabel).append(activeAvgValue)
-                .append(chatUtil.addSpacing(Component.empty(), 36))
+                .append(chatUtil.addSpacing(Component.empty(), 71))
                 .append(active64DayLabel).append(active64DayValue));
 
         sender.sendMessage(Component.empty());
@@ -200,8 +167,8 @@ public class BalanceCommand implements CommandExecutor {
         sender.sendMessage(Component.text("").append(wealthTitle).append(top4Label).append(top16Label).append(top64Label));
 
         // Distribution rows
-        sender.sendMessage(createDistributionRow("all", totalAccounts, top4All, top16All, top64All));
-        sender.sendMessage(createDistributionRow("active", activeAccounts, top4Active, top16Active, top64Active));
+        //sender.sendMessage(createDistributionRow("all", totalAccounts, top4All, top16All, top64All));
+        sender.sendMessage(createDistributionRow("Active Accounts", activeAccounts, top4Active, top16Active, top64Active));
     }
 
     private Component createTopNComponent(String type, int topN, double wealthPercent) {
@@ -228,14 +195,14 @@ public class BalanceCommand implements CommandExecutor {
         // Create the label part with proper spacing
         String hoverText = switch (label) {
             case "all" -> "Calculations consider ALL accounts.";
-            case "active" -> String.format("Calculations only consider accounts which have\nhad a transaction within the last %d days.",
+            case "Active Accounts" -> String.format("Calculations only consider accounts which have\nhad a transaction within the last %d days.",
                                          plugin.getFeatherEconomyConfig().getInactiveThresholdDays());
             default -> "";
         };
 
         // Create the label and count as a grouped component with shared hover
-        Component labelText = chatUtil.addSpacing(Component.text(label, TITLE_COLOR), 40);
-        Component countText = chatUtil.addSpacing(Component.text(String.format("(%,d)", totalAccounts), SECONDARY_COLOR), 50,true);
+        Component labelText = chatUtil.addSpacing(Component.text(label, TITLE_COLOR), 80);
+        Component countText = chatUtil.addSpacing(Component.text(String.format("(%,d)", totalAccounts), SECONDARY_COLOR), 40,true);
 
         // Group the label and count together with shared hover text
         Component labelSpace = Component.empty()
@@ -243,7 +210,7 @@ public class BalanceCommand implements CommandExecutor {
             .append(countText)
             .hoverEvent(Component.text(hoverText, SECONDARY_COLOR));
 
-        Component emptySpace = chatUtil.addSpacing(Component.empty(),46);
+        Component emptySpace = chatUtil.addSpacing(Component.empty(),16);
 
         Component top4Value = createTopNComponent(label, 4, top4Percent);
         Component top16Value = createTopNComponent(label, 16, top16Percent);
