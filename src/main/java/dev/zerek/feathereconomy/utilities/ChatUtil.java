@@ -23,9 +23,9 @@ public class ChatUtil {
     }
 
     private void init() {
-        File file = new File(Bukkit.getPluginManager().getPlugin("FeatherClans").getDataFolder(), "characters.yml");
+        File file = new File(plugin.getDataFolder(), "characters.yml");
         if (!file.exists()) {
-            Bukkit.getPluginManager().getPlugin("FeatherClans").saveResource("characters.yml", false);
+            plugin.saveResource("characters.yml", false);
         }
         YamlConfiguration characters = YamlConfiguration.loadConfiguration(file);
         characters.getKeys(false).forEach(key -> dictionary.put((String) characters.get(key + ".character"), characters.getInt(key + ".width")));
