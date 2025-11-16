@@ -2,6 +2,7 @@ package dev.zerek.feathereconomy.commands;
 
 import dev.zerek.feathereconomy.FeatherEconomy;
 import dev.zerek.feathereconomy.config.FeatherEconomyMessages;
+import dev.zerek.feathereconomy.utilities.VanishedUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -73,7 +74,7 @@ public class TransferCommand implements CommandExecutor {
 
         Player target = plugin.getServer().getPlayer(args[1]);
 
-        if (target == null) {
+        if (target == null || VanishedUtil.isVanished(target)) {
 
             player.sendMessage(messages.get("ErrorUnresolvedPlayer"));
 

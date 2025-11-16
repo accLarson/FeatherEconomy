@@ -26,39 +26,24 @@ public final class FeatherEconomy extends JavaPlugin {
     public void onEnable() {
 
         this.config = new FeatherEconomyConfig(this);
-
         this.messages = new FeatherEconomyMessages(this);
-
         this.economy = new EconomyServiceProvider(this);
-
         this.database = new DatabaseManager(this);
-
         this.storage = new StorageManager(this);
 
         this.getServer().getPluginManager().registerEvents(new VillagerAcquireTradeListener(), this);
-
         this.getServer().getPluginManager().registerEvents(new EntityDropItemListener(), this);
 
         this.getCommand("balance").setExecutor(new BalanceCommand(this));
-
         this.getCommand("balance").setTabCompleter(new BalanceTabCompleter());
-
         this.getCommand("deposit").setExecutor(new DepositCommand(this));
-
         this.getCommand("deposit").setTabCompleter(new DepositTabCompleter());
-
         this.getCommand("transfer").setExecutor(new TransferCommand(this));
-
         this.getCommand("transfer").setTabCompleter(new TransferTabCompleter());
-
         this.getCommand("withdraw").setExecutor(new WithdrawCommand(this));
-
         this.getCommand("withdraw").setTabCompleter(new WithdrawTabCompleter(this));
-
         this.getCommand("managebalance").setExecutor(new ManageBalanceCommand(this));
-
         this.getCommand("managebalance").setTabCompleter(new ManageBalanceTabCompleter());
-
         this.getCommand("economyreport").setExecutor(new EconomyReportCommand(this));
         this.getCommand("economyreport").setTabCompleter(new EconomyReportTabCompleter());
 
