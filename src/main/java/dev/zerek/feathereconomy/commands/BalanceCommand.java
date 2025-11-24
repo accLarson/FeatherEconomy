@@ -168,7 +168,7 @@ public class BalanceCommand implements CommandExecutor {
 
         // Distribution rows
         //sender.sendMessage(createDistributionRow("all", totalAccounts, top4All, top16All, top64All));
-        sender.sendMessage(createDistributionRow("Active Accounts", activeAccounts, top4Active, top16Active, top64Active));
+        sender.sendMessage(createDistributionRow("active", activeAccounts, top4Active, top16Active, top64Active));
     }
 
     private Component createTopNComponent(String type, int topN, double wealthPercent) {
@@ -195,13 +195,13 @@ public class BalanceCommand implements CommandExecutor {
         // Create the label part with proper spacing
         String hoverText = switch (label) {
             case "all" -> "Calculations consider ALL accounts.";
-            case "Active Accounts" -> String.format("Calculations only consider accounts which have\nhad a transaction within the last %d days.",
+            case "active" -> String.format("Calculations only consider accounts which have\nhad a transaction within the last %d days.",
                                          plugin.getFeatherEconomyConfig().getInactiveThresholdDays());
             default -> "";
         };
 
         // Create the label and count as a grouped component with shared hover
-        Component labelText = chatUtil.addSpacing(Component.text(label, TITLE_COLOR), 80);
+        Component labelText = chatUtil.addSpacing(Component.text("Active Accounts", TITLE_COLOR), 80);
         Component countText = chatUtil.addSpacing(Component.text(String.format("(%,d)", totalAccounts), SECONDARY_COLOR), 40,true);
 
         // Group the label and count together with shared hover text

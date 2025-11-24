@@ -117,7 +117,6 @@ public class StorageManager {
 
     public double getTopNWealth(int n, String mode) {
         String whereClause = "";
-        String countQuery = "SELECT SUM(balance) as total FROM economy_accounts";
         
         if (mode.equals("active")) {
             whereClause = " WHERE last_deposit_date >= DATE_SUB(NOW(), INTERVAL " + 
@@ -126,7 +125,9 @@ public class StorageManager {
                          plugin.getFeatherEconomyConfig().getInactiveThresholdDays() + " DAY)";
         }
         
-        try (ResultSet totalResult = database.executeQuery(countQuery + whereClause)) {
+        String countQuery = "SELECT SUM(balance) as total FROM economy_accounts" + whereClause;
+        
+        try (ResultSet totalResult = database.executeQuery(countQuery)) {
             if (!totalResult.next() || totalResult.getDouble("total") <= 0) {
                 return 0.0;
             }
