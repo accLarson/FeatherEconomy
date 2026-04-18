@@ -8,3 +8,5 @@ settings:
     database: 'economy'
   report:
     inactive-threshold-days: 64
+  lapislog:
+    lines-per-page: 8

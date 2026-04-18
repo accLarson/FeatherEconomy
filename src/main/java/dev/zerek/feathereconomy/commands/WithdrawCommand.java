@@ -90,15 +90,19 @@ public class WithdrawCommand implements CommandExecutor {
 
         // Checks passed ----------------------------------------------------------------
 
+        double oldBalance = plugin.getEconomy().getBalance(player);
+
         this.plugin.getEconomy().withdrawPlayer(player, amount);
 
         player.getInventory().setMaxStackSize(64);
 
         HashMap<Integer, ItemStack> remainingItemStackMap = player.getInventory().addItem(new ItemStack(Material.LAPIS_LAZULI, amount));
 
+        int refund = 0;
+
         if (!remainingItemStackMap.isEmpty()) {
 
-            int refund = (remainingItemStackMap.get(0)).getAmount();
+            refund = (remainingItemStackMap.get(0)).getAmount();
 
             this.plugin.getEconomy().depositPlayer(player, refund);
 
@@ -106,6 +110,10 @@ public class WithdrawCommand implements CommandExecutor {
         }
 
         else player.sendMessage(messages.get("Withdraw", Map.of("amount", String.valueOf(amount))));
+
+        int actualWithdrawn = amount - refund;
+
+        plugin.getStorage().logSelf("WITHDRAW", player.getUniqueId(), actualWithdrawn, oldBalance - actualWithdrawn);
 
         player.sendMessage(messages.get("Balance", Map.of("balance", String.valueOf((int) plugin.getEconomy().getBalance(player)))));
 

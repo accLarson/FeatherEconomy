@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class ManageBalanceCommand implements CommandExecutor {
 
@@ -55,7 +56,7 @@ public class ManageBalanceCommand implements CommandExecutor {
 
                 OfflinePlayer target = plugin.getServer().getOfflinePlayer(args[0]);
 
-                if (plugin.getEconomy().hasAccount(target)) sender.sendMessage(messages.get("BalanceOtherUsage"));
+                if (target.hasPlayedBefore()) sender.sendMessage(messages.get("BalanceOtherUsage"));
                 else sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
                 return true;
 
@@ -64,7 +65,7 @@ public class ManageBalanceCommand implements CommandExecutor {
 
                 OfflinePlayer target2 = plugin.getServer().getOfflinePlayer(args[0]);
 
-                if (!plugin.getEconomy().hasAccount(target2)) {
+                if (!target2.hasPlayedBefore()) {
                     sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
                     return true;
                 }
@@ -87,12 +88,17 @@ public class ManageBalanceCommand implements CommandExecutor {
                     return true;
                 }
 
+                else {
+                    sender.sendMessage(messages.get("BalanceOtherUsage"));
+                    return true;
+                }
+
             // /managebalance [player] [remove/add/set] [amount]
             case 3:
 
                 OfflinePlayer target3 = plugin.getServer().getOfflinePlayer(args[0]);
 
-                if (!plugin.getEconomy().hasAccount(target3)) {
+                if (!target3.hasPlayedBefore()) {
                     sender.sendMessage(messages.get("ErrorUnresolvedPlayer"));
                     return true;
                 }
@@ -104,6 +110,8 @@ public class ManageBalanceCommand implements CommandExecutor {
                     return true;
                 }
 
+                UUID adminUuid = (sender instanceof Player) ? ((Player) sender).getUniqueId() : null;
+
                 // /managebalance [player] remove [amount]
                 if (args[1].equalsIgnoreCase("remove")) {
 
@@ -113,7 +121,11 @@ public class ManageBalanceCommand implements CommandExecutor {
                         return true;
                     }
 
+                    double targetOldBalance = plugin.getEconomy().getBalance(target3);
+
                     plugin.getEconomy().withdrawPlayer(target3,amount);
+
+                    plugin.getStorage().logAdminAction("ADMIN_REMOVE", adminUuid, target3.getUniqueId(), amount, targetOldBalance - amount);
 
                     sender.sendMessage(messages.get("ManageBalanceRemove", Map.of("amount",String.valueOf(amount),"player",target3.getName())));
                     sender.sendMessage(messages.get("BalanceOther", Map.of("player", target3.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target3)))));
@@ -129,7 +141,11 @@ public class ManageBalanceCommand implements CommandExecutor {
                 // /managebalance [player] add [amount]
                 else if (args[1].equalsIgnoreCase("add")) {
 
+                    double targetOldBalance = plugin.getEconomy().getBalance(target3);
+
                     plugin.getEconomy().depositPlayer(target3,amount);
+
+                    plugin.getStorage().logAdminAction("ADMIN_ADD", adminUuid, target3.getUniqueId(), amount, targetOldBalance + amount);
 
                     sender.sendMessage(messages.get("ManageBalanceAdd", Map.of("amount",String.valueOf(amount),"player",target3.getName())));
                     sender.sendMessage(messages.get("BalanceOther", Map.of("player", target3.getName(), "balance", String.valueOf((int) plugin.getEconomy().getBalance(target3)))));
@@ -147,6 +163,8 @@ public class ManageBalanceCommand implements CommandExecutor {
 
                     plugin.getEconomy().withdrawPlayer(target3,plugin.getEconomy().getBalance(target3));
                     plugin.getEconomy().depositPlayer(target3,amount);
+
+                    plugin.getStorage().logAdminAction("ADMIN_SET", adminUuid, target3.getUniqueId(), amount, amount);
 
                     sender.sendMessage(messages.get("ManageBalanceSet", Map.of("amount",String.valueOf(amount),"player",target3.getName())));
 

@@ -2,8 +2,11 @@ package dev.zerek.feathereconomy.managers;
 
 import dev.zerek.feathereconomy.FeatherEconomy;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.*;
 
 public class StorageManager {
@@ -216,4 +219,93 @@ public class StorageManager {
         return database.executeUpdate("UPDATE economy_accounts SET balance = " + updatedBalance + ", last_deposit_value = " + amount + ", last_deposit_date = CURRENT_TIMESTAMP where mojang_uuid = '" + uuid + "';");
     }
 
+    // ----- Transaction log -----
+
+    public record Transaction(
+            long timestamp,
+            String type,
+            String direction,
+            UUID playerUuid,
+            UUID counterpartyUuid,
+            double amount,
+            double balanceAfter
+    ) {}
+
+    public void logTransaction(String type, String direction, UUID playerUuid, UUID counterpartyUuid, double amount, double balanceAfter) {
+        String sql = "INSERT INTO economy_transactions (type, direction, player_uuid, counterparty_uuid, amount, balance_after) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = database.getConnection().prepareStatement(sql)) {
+            ps.setString(1, type);
+            ps.setString(2, direction);
+            ps.setString(3, playerUuid.toString());
+            if (counterpartyUuid != null) ps.setString(4, counterpartyUuid.toString());
+            else ps.setNull(4, Types.VARCHAR);
+            ps.setDouble(5, amount);
+            ps.setDouble(6, balanceAfter);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to log transaction for " + playerUuid + ": " + e.getMessage());
+        }
+    }
+
+    public void logSelf(String type, UUID uuid, double amount, double balanceAfter) {
+        logTransaction(type, "SELF", uuid, null, amount, balanceAfter);
+    }
+
+    public void logTransfer(UUID senderUuid, UUID recipientUuid, double amount, double senderBalanceAfter, double recipientBalanceAfter) {
+        logTransaction("TRANSFER", "SENT", senderUuid, recipientUuid, amount, senderBalanceAfter);
+        logTransaction("TRANSFER", "RECEIVED", recipientUuid, senderUuid, amount, recipientBalanceAfter);
+    }
+
+    public void logAdminAction(String type, UUID adminUuid, UUID targetUuid, double amount, double targetBalanceAfter) {
+        if (adminUuid != null && adminUuid.equals(targetUuid)) {
+            logTransaction(type, "SELF", adminUuid, null, amount, targetBalanceAfter);
+        } else {
+            logTransaction(type, "RECEIVED", targetUuid, adminUuid, amount, targetBalanceAfter);
+        }
+    }
+
+    public List<Transaction> getTransactions(UUID uuid, int page, int pageSize) {
+        List<Transaction> results = new ArrayList<>();
+        int offset = Math.max(0, (page - 1) * pageSize);
+        String sql = "SELECT timestamp, type, direction, player_uuid, counterparty_uuid, amount, balance_after "
+                + "FROM economy_transactions WHERE player_uuid = ? AND direction != 'PERFORMED' "
+                + "ORDER BY timestamp DESC, id DESC LIMIT ? OFFSET ?";
+        try (PreparedStatement ps = database.getConnection().prepareStatement(sql)) {
+            ps.setString(1, uuid.toString());
+            ps.setInt(2, pageSize);
+            ps.setInt(3, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Timestamp ts = rs.getTimestamp("timestamp");
+                    String cpStr = rs.getString("counterparty_uuid");
+                    UUID counterparty = cpStr != null ? UUID.fromString(cpStr) : null;
+                    results.add(new Transaction(
+                            ts != null ? ts.getTime() : 0L,
+                            rs.getString("type"),
+                            rs.getString("direction"),
+                            UUID.fromString(rs.getString("player_uuid")),
+                            counterparty,
+                            rs.getDouble("amount"),
+                            rs.getDouble("balance_after")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to fetch transactions for " + uuid + ": " + e.getMessage());
+        }
+        return results;
+    }
+
+    public int getTransactionCount(UUID uuid) {
+        String sql = "SELECT COUNT(*) FROM economy_transactions WHERE player_uuid = ? AND direction != 'PERFORMED'";
+        try (PreparedStatement ps = database.getConnection().prepareStatement(sql)) {
+            ps.setString(1, uuid.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Failed to count transactions for " + uuid + ": " + e.getMessage());
+        }
+        return 0;
+    }
 }

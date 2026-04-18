@@ -15,6 +15,7 @@ public class FeatherEconomyConfig {
     private String mysqlPassword;
     private String mysqlDatabase;
     private boolean mysqlEnabled;
+    private int lapisLogLinesPerPage;
 
     public FeatherEconomyConfig(FeatherEconomy plugin) {
         this.plugin = plugin;
@@ -31,6 +32,7 @@ public class FeatherEconomyConfig {
         this.mysqlPassword = config.getString("settings.mysql.password");
         this.mysqlDatabase = config.getString("settings.mysql.database");
         this.inactiveThresholdDays = config.getInt("settings.report.inactive-threshold-days", 30);
+        this.lapisLogLinesPerPage = config.getInt("settings.lapislog.lines-per-page", 10);
     }
 
     public String getMysqlUsername() {
@@ -59,5 +61,9 @@ public class FeatherEconomyConfig {
 
     public int getInactiveThresholdDays() {
         return inactiveThresholdDays;
+    }
+
+    public int getLapisLogLinesPerPage() {
+        return lapisLogLinesPerPage;
     }
 }

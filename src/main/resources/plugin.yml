@@ -17,3 +17,18 @@ commands:
     description: Withdraw lapis from your account.
   managebalance:
     description: Modify another player's balance.
+  lapislog:
+    description: View lapis transaction history.
+permissions:
+  feather.economy.player:
+    description: Grants access to all player-level economy commands.
+    default: false
+    children:
+      feather.economy.balance: true
+      feather.economy.deposit: true
+      feather.economy.withdraw: true
+      feather.economy.transfer: true
+      feather.economy.lapislog: true
+  feather.economy.managebalance:
+    description: Manage another player's balance.
+    default: op

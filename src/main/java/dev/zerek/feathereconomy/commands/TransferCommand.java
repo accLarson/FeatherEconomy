@@ -81,6 +81,13 @@ public class TransferCommand implements CommandExecutor {
             return true;
         }
 
+        if (player.getUniqueId().equals(target.getUniqueId())) {
+
+            player.sendMessage(messages.get("TransferSelf"));
+
+            return true;
+        }
+
         if (!plugin.getEconomy().has(player, amount)) {
 
             player.sendMessage(messages.get("TransferInsufficient"));
@@ -90,9 +97,21 @@ public class TransferCommand implements CommandExecutor {
 
         // Checks passed ----------------------------------------------------------------
 
+        double senderOldBalance = plugin.getEconomy().getBalance(player);
+
+        double recipientOldBalance = plugin.getEconomy().getBalance(target);
+
         plugin.getEconomy().depositPlayer(target, amount);
 
         plugin.getEconomy().withdrawPlayer(player, amount);
+
+        plugin.getStorage().logTransfer(
+                player.getUniqueId(),
+                target.getUniqueId(),
+                amount,
+                senderOldBalance - amount,
+                recipientOldBalance + amount
+        );
 
         target.sendMessage(messages.get("TransferReceived", Map.of("player", player.getName(), "amount", String.valueOf(amount))));
 

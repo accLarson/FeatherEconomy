@@ -46,3 +46,20 @@ ManageBalanceEmptyInform: "<#6C719D>Your account balance has been emptied."
 EconomyReportPreLine: "<white>•<#777777>--- <white>FeatherEconomy <#777777>----------------------------------<white>•"
 EconomyReportLine: "<white>•<#777777>----------------------------------------------------<white>•"
 
+# LapisLog
+LapisPreLine: "<white>•<#777777>--- <white>LapisLog <#777777>----------------------------------------<white>•"
+LapisLine: "<white>•<#777777>----------------------------------------------------<white>•"
+LapisBackArrow: " <white>◀ "
+LapisNextArrow: " <white>▶ "
+LapisBackArrowDisabled: " <#aaaaaa>◀ "
+LapisNextArrowDisabled: " <#aaaaaa>▶ "
+LapisPageCount: "<white><page>/<total>"
+LapisPaginatorPrefix: "<white>•<#777777>--- |"
+LapisPaginatorSuffix: "<#777777>| ---------------------------------<white>•"
+LapisEmpty: "<#949BD1>No transactions to display."
+LapisLogUsage: "<#949BD1>Usage<#656B96>: /lapislog [player] [page]"
+LapisLogPageOutOfRange: "<#6C719D>Error: Page <#949bd1><page><#6C719D> does not exist. (max: <total>)"
+LapisLogUnresolvedCounterparty: "<#6C719D>Error: Could not resolve a transaction counterparty. The log may reference a player who never joined this server."
+
+TransferSelf: "<#6C719D>Error: You cannot transfer Lapis to yourself."
+

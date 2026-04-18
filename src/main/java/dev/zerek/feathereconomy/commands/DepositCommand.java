@@ -98,9 +98,13 @@ public class DepositCommand implements CommandExecutor {
 
         // Checks passed ----------------------------------------------------------------
 
+        double oldBalance = plugin.getEconomy().getBalance(player);
+
         player.getInventory().removeItem(new ItemStack(Material.LAPIS_LAZULI, amount));
 
         plugin.getEconomy().depositPlayer(player, amount);
+
+        plugin.getStorage().logSelf("DEPOSIT", player.getUniqueId(), amount, oldBalance + amount);
 
         player.sendMessage(messages.get("Deposit", Map.of("amount", String.valueOf(amount))));
 
