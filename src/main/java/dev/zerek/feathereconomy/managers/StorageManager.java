@@ -347,7 +347,8 @@ public class StorageManager {
             UUID playerUuid,
             UUID counterpartyUuid,
             double amount,
-            double balanceAfter
+            double balanceAfter,
+            String detail
     ) {}
 
     public LogEntry logTransaction(String type, String direction, UUID playerUuid, UUID counterpartyUuid, double amount, double balanceAfter) {
@@ -373,15 +374,15 @@ public class StorageManager {
         return entry;
     }
 
-    public void describe(LogEntry entry, String label, UUID counterpartyUuid) {
-        String sql = "UPDATE economy_transactions SET type = ?, counterparty_uuid = ? WHERE id = ?";
+    public void describe(LogEntry entry, String label, String detail) {
+        String sql = "UPDATE economy_transactions SET type = ?, detail = ? WHERE id = ?";
         this.queue(() -> {
             if (entry.id <= 0) {
                 return;
             }
             try (PreparedStatement ps = database.getConnection().prepareStatement(sql)) {
                 ps.setString(1, label);
-                if (counterpartyUuid != null) ps.setString(2, counterpartyUuid.toString());
+                if (detail != null) ps.setString(2, detail);
                 else ps.setNull(2, Types.VARCHAR);
                 ps.setLong(3, entry.id);
                 ps.executeUpdate();
@@ -409,7 +410,7 @@ public class StorageManager {
     public List<Transaction> getTransactions(UUID uuid, int page, int pageSize) {
         List<Transaction> results = new ArrayList<>();
         int offset = Math.max(0, (page - 1) * pageSize);
-        String sql = "SELECT timestamp, type, direction, player_uuid, counterparty_uuid, amount, balance_after "
+        String sql = "SELECT timestamp, type, direction, player_uuid, counterparty_uuid, amount, balance_after, detail "
                 + "FROM economy_transactions WHERE player_uuid = ? AND direction != 'PERFORMED' "
                 + "ORDER BY timestamp DESC, id DESC LIMIT ? OFFSET ?";
         try (PreparedStatement ps = database.getConnection().prepareStatement(sql)) {
@@ -428,7 +429,8 @@ public class StorageManager {
                             UUID.fromString(rs.getString("player_uuid")),
                             counterparty,
                             rs.getDouble("amount"),
-                            rs.getDouble("balance_after")
+                            rs.getDouble("balance_after"),
+                            rs.getString("detail")
                     ));
                 }
             }

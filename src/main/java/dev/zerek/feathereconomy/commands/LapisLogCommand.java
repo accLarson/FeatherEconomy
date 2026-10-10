@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -174,7 +175,15 @@ public class LapisLogCommand implements CommandExecutor {
         Component date = chatUtil.addSpacing(
                 Component.text(dateStr, SECONDARY).hoverEvent(HoverEvent.showText(dateHover)), 40);
         Component amount = chatUtil.addSpacing(Component.text(amountStr, amountColorFor(tx)), 65, true);
-        Component type = chatUtil.addSpacing(Component.text(typeLabel, TITLE), 140);
+        Component typeText = Component.text(typeLabel, TITLE);
+        if (tx.detail() != null) {
+            try {
+                typeText = Component.text("", TITLE).append(GsonComponentSerializer.gson().deserialize(tx.detail()));
+            } catch (RuntimeException e) {
+                typeText = Component.text(typeLabel, TITLE);
+            }
+        }
+        Component type = chatUtil.addSpacing(typeText, 140);
         Component balance = chatUtil.addSpacing(Component.text(balanceStr, PRIMARY), 65, true);
 
         return Component.empty()
@@ -242,9 +251,6 @@ public class LapisLogCommand implements CommandExecutor {
                 String label = plugin.getFeatherEconomyConfig().getLapisLogLabel(tx.type(), direction.toLowerCase());
                 if (label == null) {
                     label = tx.type();
-                }
-                if (tx.counterpartyUuid() != null && nameCache.get(tx.counterpartyUuid()) != null) {
-                    label = label + " " + nameCache.get(tx.counterpartyUuid());
                 }
                 yield label;
             }

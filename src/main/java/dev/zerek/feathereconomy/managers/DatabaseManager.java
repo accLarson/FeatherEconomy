@@ -141,6 +141,7 @@ public class DatabaseManager {
                     + " `direction` VARCHAR(16) NOT NULL, "
                     + " `player_uuid` VARCHAR(36) NOT NULL, "
                     + " `counterparty_uuid` VARCHAR(36) NULL, "
+                    + " `detail` TEXT NULL, "
                     + " `amount` DOUBLE NOT NULL, "
                     + " `balance_after` DOUBLE NOT NULL);";
             try {
