@@ -66,4 +66,8 @@ public class FeatherEconomyConfig {
     public int getLapisLogLinesPerPage() {
         return lapisLogLinesPerPage;
     }
+
+    public String getLapisLogLabel(String plugin, String direction) {
+        return config.getString("settings.lapislog.labels." + plugin + "." + direction);
+    }
 }

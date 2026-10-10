@@ -2,6 +2,7 @@ ErrorNotPlayer: "Error: You must be a player to use this command."
 ErrorNoPermission: "<#6C719D>Error: You do not have permission to use this command."
 ErrorUnresolvedPlayer: "<#6C719D>Error: Unable to resolve requested username."
 ErrorNotNumber: "<#6C719D>Error: amount must be a non-zero integer."
+ErrorOffline: "<#6C719D>Error: The economy is offline. Try again later."
 
 Balance: "<#6C719D>Your current balance is: <#949bd1><balance> Lapis<#6C719D>."
 BalanceUsage: "/balance"

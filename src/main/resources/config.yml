@@ -10,3 +10,10 @@ settings:
     inactive-threshold-days: 64
   lapislog:
     lines-per-page: 8
+    labels:
+      FeatherMarket:
+        withdraw: 'Market'
+        deposit: 'Market sale'
+      FeatherClans:
+        withdraw: 'Clan cost'
+        deposit: 'Clan refund'

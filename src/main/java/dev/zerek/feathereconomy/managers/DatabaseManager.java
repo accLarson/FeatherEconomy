@@ -3,14 +3,13 @@ package dev.zerek.feathereconomy.managers;
 import dev.zerek.feathereconomy.FeatherEconomy;
 import dev.zerek.feathereconomy.config.FeatherEconomyConfig;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.sql.*;
-import java.util.Properties;
 
 public class DatabaseManager {
 
-    private static Connection connection;
+    private Connection connection;
+    private long lastUsed;
     private final FeatherEconomy plugin;
     private final FeatherEconomyConfig config;
     private final boolean isMySQLEnabled;
@@ -33,49 +32,61 @@ public class DatabaseManager {
         }
     }
 
-    private void initMySQLConnection(){
-        FeatherEconomyConfig config = this.plugin.getFeatherEconomyConfig();
-
-        String host = config.getMysqlHost();
-        int port = config.getMysqlPort();
-        String database = config.getMysqlDatabase();
-
-        String url = String.format("jdbc:mysql://%s:%d/%s", host, port, database);
-
-        String username = config.getMysqlUsername();
-        String password = config.getMysqlPassword();
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            DatabaseManager.connection = DriverManager.getConnection(url, username, password);
-        } catch (SQLException | ClassNotFoundException exception) {
-            plugin.getLogger().severe("Unable to initialize connection.");
-            plugin.getLogger().severe("Ensure connection can be made with provided MySQL strings.");
-            plugin.getLogger().severe("Connection URL: " + url);
-            plugin.getLogger().severe("Defaulting to local SQLite storage.");
-            this.initSQLiteConnection();
-        }
-
+    private String getMySQLUrl() {
+        return String.format("jdbc:mysql://%s:%d/%s?connectTimeout=10000&socketTimeout=30000", this.config.getMysqlHost(), this.config.getMysqlPort(), this.config.getMysqlDatabase());
     }
 
-    private void initSQLiteConnection(){
+    private Connection connectMySQL() throws SQLException {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException exception) {
+            throw new SQLException(exception);
+        }
+        return DriverManager.getConnection(this.getMySQLUrl(), this.config.getMysqlUsername(), this.config.getMysqlPassword());
+    }
+
+    private Connection connectSQLite() throws SQLException {
         File folder = new File(this.plugin.getDataFolder().getPath());
         if (!folder.exists()) {
             folder.mkdirs();
         }
         File file = new File(folder.getAbsolutePath() + File.separator + "feather_economy.db");
+        return DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
+    }
+
+    private void initMySQLConnection(){
         try {
-            this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
+            this.connection = this.connectMySQL();
+        } catch (SQLException exception) {
+            plugin.getLogger().severe("Unable to initialize connection.");
+            plugin.getLogger().severe("Ensure connection can be made with provided MySQL strings.");
+            plugin.getLogger().severe("Connection URL: " + this.getMySQLUrl());
+        }
+
+    }
+
+    private void initSQLiteConnection(){
+        try {
+            this.connection = this.connectSQLite();
         } catch (SQLException sQLException) {
             plugin.getLogger().severe("Unable to initialize connection.");
         }
     }
 
-    public void close() {
+    public synchronized void reconnect() throws SQLException {
+        this.close();
+        if (this.isMySQLEnabled) {
+            this.connection = this.connectMySQL();
+        } else {
+            this.connection = this.connectSQLite();
+        }
+    }
+
+    public synchronized void close() {
         try {
-            if (DatabaseManager.connection != null) {
-                if (!DatabaseManager.connection.isClosed()){
-                    DatabaseManager.connection.close();
+            if (this.connection != null) {
+                if (!this.connection.isClosed()){
+                    this.connection.close();
                 }
             }
         } catch (SQLException exception) {
@@ -146,17 +157,31 @@ public class DatabaseManager {
         }
     }
 
-    public Connection getConnection() {
-        return connection;
+    public boolean isConnected() {
+        return this.connection != null;
+    }
+
+    public synchronized boolean isValid() {
+        try {
+            return this.connection != null && this.connection.isValid(2);
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public synchronized Connection getConnection() throws SQLException {
+        long now = System.currentTimeMillis();
+        if (this.connection == null || this.connection.isClosed()
+                || (now - this.lastUsed > 30000 && !this.connection.isValid(2))) {
+            this.reconnect();
+        }
+        this.lastUsed = now;
+        return this.connection;
     }
 
     public boolean executeUpdate(String update) {
-        if (DatabaseManager.connection == null) {
-            return false;
-        }
-        Statement statement;
         try {
-            statement = DatabaseManager.connection.createStatement();
+            Statement statement = this.getConnection().createStatement();
             statement.executeUpdate(update);
             statement.close();
             return true;
@@ -167,11 +192,10 @@ public class DatabaseManager {
     }
 
     public ResultSet executeQuery(String query) {
-        if (DatabaseManager.connection == null) {
-            return null;
-        }
         try {
-            return DatabaseManager.connection.createStatement().executeQuery(query);
+            Statement statement = this.getConnection().createStatement();
+            statement.closeOnCompletion();
+            return statement.executeQuery(query);
         } catch (SQLException e) {
             plugin.getLogger().severe("Failed to execute query: ||| " + query + " |||");
             return null;

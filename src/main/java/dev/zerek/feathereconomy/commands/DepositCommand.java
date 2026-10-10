@@ -96,6 +96,13 @@ public class DepositCommand implements CommandExecutor {
             return true;
         }
 
+        if (plugin.getStorage().isOffline()) {
+
+            player.sendMessage(messages.get("ErrorOffline"));
+
+            return true;
+        }
+
         // Checks passed ----------------------------------------------------------------
 
         double oldBalance = plugin.getEconomy().getBalance(player);

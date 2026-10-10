@@ -3,6 +3,7 @@ package dev.zerek.feathereconomy.commands;
 import dev.zerek.feathereconomy.FeatherEconomy;
 import dev.zerek.feathereconomy.config.FeatherEconomyMessages;
 import dev.zerek.feathereconomy.utilities.VanishedUtil;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -88,7 +89,16 @@ public class TransferCommand implements CommandExecutor {
             return true;
         }
 
-        if (!plugin.getEconomy().has(player, amount)) {
+        if (plugin.getStorage().isOffline()) {
+
+            player.sendMessage(messages.get("ErrorOffline"));
+
+            return true;
+        }
+
+        EconomyResponse withdrawal = plugin.getEconomy().withdrawPlayer(player, amount);
+
+        if (!withdrawal.transactionSuccess()) {
 
             player.sendMessage(messages.get("TransferInsufficient"));
 
@@ -97,20 +107,14 @@ public class TransferCommand implements CommandExecutor {
 
         // Checks passed ----------------------------------------------------------------
 
-        double senderOldBalance = plugin.getEconomy().getBalance(player);
-
-        double recipientOldBalance = plugin.getEconomy().getBalance(target);
-
-        plugin.getEconomy().depositPlayer(target, amount);
-
-        plugin.getEconomy().withdrawPlayer(player, amount);
+        EconomyResponse deposit = plugin.getEconomy().depositPlayer(target, amount);
 
         plugin.getStorage().logTransfer(
                 player.getUniqueId(),
                 target.getUniqueId(),
                 amount,
-                senderOldBalance - amount,
-                recipientOldBalance + amount
+                withdrawal.balance,
+                deposit.balance
         );
 
         target.sendMessage(messages.get("TransferReceived", Map.of("player", player.getName(), "amount", String.valueOf(amount))));

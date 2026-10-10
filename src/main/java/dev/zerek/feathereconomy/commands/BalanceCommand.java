@@ -61,7 +61,7 @@ public class BalanceCommand implements CommandExecutor {
 
         // Run the report generation asynchronously
         OfflinePlayer finalTargetPlayer = targetPlayer;
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        storage.submit(() -> {
             int totalAccounts = storage.getTotalAccounts();
             int activeAccounts = storage.getActiveAccounts();
             int totalLapis = storage.getTotalLapis(false);

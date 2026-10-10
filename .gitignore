@@ -104,3 +104,5 @@ build/
 run/
 /.codebuddy/.gitignore
 /.codebuddy/summary.md
+
+.claude/

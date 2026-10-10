@@ -81,6 +81,13 @@ public class WithdrawCommand implements CommandExecutor {
             return true;
         }
 
+        if (plugin.getStorage().isOffline()) {
+
+            player.sendMessage(messages.get("ErrorOffline"));
+
+            return true;
+        }
+
         if (!plugin.getEconomy().has(player, amount)) {
 
             player.sendMessage(messages.get("WithdrawInsufficient"));

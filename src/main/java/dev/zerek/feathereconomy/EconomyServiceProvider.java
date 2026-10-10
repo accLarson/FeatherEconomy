@@ -1,8 +1,11 @@
 package dev.zerek.feathereconomy;
 
+import dev.zerek.feathereconomy.api.FeatherEconomyResponse;
+import dev.zerek.feathereconomy.managers.StorageManager;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -111,7 +114,7 @@ public class EconomyServiceProvider implements Economy {
 
     @Override
     public boolean has(OfflinePlayer player, double amount) {
-        return (this.getBalance(player) >= amount);
+        return !this.plugin.getStorage().isOffline() && this.getBalance(player) >= amount;
     }
 
     /* No support for multiple worlds */
@@ -135,9 +138,13 @@ public class EconomyServiceProvider implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
         double balance = this.getBalance(player);
+        if (amount < 0 || Double.isNaN(amount)) {
+            return new EconomyResponse(amount, balance, EconomyResponse.ResponseType.FAILURE, "");
+        }
         if (this.has(player, amount)) {
             if (this.plugin.getStorage().withdraw(player.getUniqueId(), amount)) {
-                return new EconomyResponse(amount, balance - amount, EconomyResponse.ResponseType.SUCCESS, "");
+                StorageManager.LogEntry entry = this.logExternal("WITHDRAW", player, amount);
+                return new FeatherEconomyResponse(amount, balance - amount, EconomyResponse.ResponseType.SUCCESS, "", entry);
             }
         }
         return new EconomyResponse(amount, balance, EconomyResponse.ResponseType.FAILURE, "");
@@ -163,6 +170,9 @@ public class EconomyServiceProvider implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
+        if (amount < 0 || Double.isNaN(amount)) {
+            return new EconomyResponse(amount, this.getBalance(player), EconomyResponse.ResponseType.FAILURE, "");
+        }
         double balance = 0;
         if (!this.hasAccount(player)) {
             this.createPlayerAccount(player);
@@ -170,7 +180,8 @@ public class EconomyServiceProvider implements Economy {
             balance = this.getBalance(player);
         }
         if (this.plugin.getStorage().deposit(player.getUniqueId(), amount)) {
-            return new EconomyResponse(amount, balance + amount, EconomyResponse.ResponseType.SUCCESS, "");
+            StorageManager.LogEntry entry = this.logExternal("DEPOSIT", player, amount);
+            return new FeatherEconomyResponse(amount, balance + amount, EconomyResponse.ResponseType.SUCCESS, "", entry);
         } else {
             return new EconomyResponse(amount, balance, EconomyResponse.ResponseType.FAILURE, "");
         }
@@ -284,5 +295,32 @@ public class EconomyServiceProvider implements Economy {
     @Override
     public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
         return false;
+    }
+
+    // Logs payments made by other plugins. This plugin's commands log their own.
+    private StorageManager.LogEntry logExternal(String direction, OfflinePlayer player, double amount) {
+        List<Class<?>> callers = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).walk(frames ->
+                frames.map(StackWalker.StackFrame::getDeclaringClass)
+                        .dropWhile(c -> c == EconomyServiceProvider.class)
+                        .toList());
+        if (!callers.isEmpty() && callers.get(0).getPackageName().startsWith("dev.zerek.feathereconomy")) {
+            return null;
+        }
+        String name = "Other";
+        for (Class<?> caller : callers) {
+            if (caller.getPackageName().startsWith("net.milkbowl.vault")) {
+                continue;
+            }
+            try {
+                name = JavaPlugin.getProvidingPlugin(caller).getName();
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                name = "Other";
+            }
+            break;
+        }
+        if (name.length() > 32) {
+            name = name.substring(0, 32);
+        }
+        return this.plugin.getStorage().logTransaction(name, direction, player.getUniqueId(), null, amount, this.getBalance(player));
     }
 }

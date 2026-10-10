@@ -102,7 +102,7 @@ public class LapisLogCommand implements CommandExecutor {
         final String finalTargetName = targetName;
         final int finalPage = page;
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        storage.submit(() -> {
             int total = storage.getTransactionCount(finalTarget.getUniqueId());
             int linesPerPage = plugin.getFeatherEconomyConfig().getLapisLogLinesPerPage();
 
@@ -190,7 +190,7 @@ public class LapisLogCommand implements CommandExecutor {
             case "DEPOSIT", "ADMIN_ADD" -> POSITIVE;
             case "WITHDRAW", "ADMIN_REMOVE" -> NEGATIVE;
             case "TRANSFER" -> "RECEIVED".equals(tx.direction()) ? POSITIVE : NEGATIVE;
-            default -> NEUTRAL;
+            default -> "WITHDRAW".equals(tx.direction()) ? NEGATIVE : POSITIVE;
         };
     }
 
@@ -198,7 +198,7 @@ public class LapisLogCommand implements CommandExecutor {
         return switch (tx.type()) {
             case "WITHDRAW", "ADMIN_REMOVE" -> true;
             case "TRANSFER" -> "SENT".equals(tx.direction());
-            default -> false;
+            default -> "WITHDRAW".equals(tx.direction());
         };
     }
 
@@ -238,7 +238,16 @@ public class LapisLogCommand implements CommandExecutor {
             case "ADMIN_ADD" -> "SELF".equals(direction) ? "Self +" : "Added by " + cp;
             case "ADMIN_REMOVE" -> "SELF".equals(direction) ? "Self -" : "Removed by " + cp;
             case "ADMIN_SET" -> "SELF".equals(direction) ? "Self Set" : "Set by " + cp;
-            default -> tx.type();
+            default -> {
+                String label = plugin.getFeatherEconomyConfig().getLapisLogLabel(tx.type(), direction.toLowerCase());
+                if (label == null) {
+                    label = tx.type();
+                }
+                if (tx.counterpartyUuid() != null && nameCache.get(tx.counterpartyUuid()) != null) {
+                    label = label + " " + nameCache.get(tx.counterpartyUuid());
+                }
+                yield label;
+            }
         };
     }
 
